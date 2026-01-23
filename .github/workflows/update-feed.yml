@@ -26,11 +26,6 @@ jobs:
       - name: Generate RSS feed
         run: node generate-feed.js
 
-      - name: Check for changes
-        id: git-check
-        run: |
-          git diff --quiet feed.xml || echo "changed=true" >> $GITHUB_OUTPUT
-
       - name: Check for new documents
         id: new-docs-check
         run: |
@@ -45,12 +40,3 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: node send-emails.js
-
-      - name: Commit and push feed.xml
-        if: steps.git-check.outputs.changed == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add feed.xml
-          git commit -m "Update RSS feed"
-          git push
