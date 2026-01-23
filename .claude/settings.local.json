@@ -16,7 +16,9 @@
       "Bash(ls:*)",
       "Bash(git push)",
       "Bash(git pull:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(chmod:*)",
+      "Bash(node add-document.js:*)"
     ]
   }
 }
