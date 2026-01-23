@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const NEW_DOCS_PATH = path.join(__dirname, 'new-documents.json');
+const DOCUMENTS_PATH = path.join(__dirname, 'documents.json');
 const SITE_URL = 'https://proofworks.cc';
+
+// Time window for considering documents as "new" for immediate emails (10 minutes)
+const NEW_DOCUMENT_WINDOW_MS = 10 * 60 * 1000;
 
 async function main() {
   // Check for required environment variables
@@ -15,15 +18,22 @@ async function main() {
     process.exit(1);
   }
 
-  // Check if new-documents.json exists
-  if (!fs.existsSync(NEW_DOCS_PATH)) {
-    console.log('No new-documents.json found, skipping email send');
-    return;
+  // Check if documents.json exists
+  if (!fs.existsSync(DOCUMENTS_PATH)) {
+    console.error('documents.json not found');
+    process.exit(1);
   }
 
-  // Read new documents
-  const newDocsJson = fs.readFileSync(NEW_DOCS_PATH, 'utf-8');
-  const newDocuments = JSON.parse(newDocsJson);
+  // Read all documents and filter by date_added within the time window
+  const allDocuments = JSON.parse(fs.readFileSync(DOCUMENTS_PATH, 'utf-8'));
+  const now = new Date();
+  const cutoffTime = new Date(now.getTime() - NEW_DOCUMENT_WINDOW_MS);
+
+  const newDocuments = allDocuments.filter(doc => {
+    if (!doc.date_added) return false;
+    const docDate = new Date(doc.date_added);
+    return docDate >= cutoffTime;
+  });
 
   if (newDocuments.length === 0) {
     console.log('No new documents to notify about');
@@ -107,10 +117,6 @@ async function main() {
   }
 
   console.log(`Email sending complete: ${successCount} sent, ${errorCount} failed`);
-
-  // Clean up new-documents.json
-  fs.unlinkSync(NEW_DOCS_PATH);
-  console.log('Cleaned up new-documents.json');
 }
 
 function generateEmailHtml(documents) {

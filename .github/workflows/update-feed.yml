@@ -26,15 +26,7 @@ jobs:
       - name: Generate RSS feed
         run: node generate-feed.js
 
-      - name: Check for new documents
-        id: new-docs-check
-        run: |
-          if [ -f new-documents.json ]; then
-            echo "has_new_docs=true" >> $GITHUB_OUTPUT
-          fi
-
       - name: Send notification emails
-        if: steps.new-docs-check.outputs.has_new_docs == 'true'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

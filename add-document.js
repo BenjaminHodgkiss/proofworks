@@ -117,10 +117,18 @@ async function addDocument() {
   console.log('\n✅ Document added successfully!');
   console.log(`   Order: ${newOrder}`);
 
+  // Regenerate feed.xml to include the new document
+  console.log('\n🔄 Regenerating RSS feed...');
+  try {
+    execSync('node generate-feed.js', { stdio: 'inherit' });
+  } catch (err) {
+    console.log('\n⚠️  Feed generation failed. Continuing with git commit...\n');
+  }
+
   // Automatically commit and push
   console.log('\n📤 Committing and pushing to git...');
   try {
-    execSync('git add documents.json', { stdio: 'inherit' });
+    execSync('git add documents.json feed.xml', { stdio: 'inherit' });
     execSync(`git commit -m 'Add: ${title.trim()}'`, { stdio: 'inherit' });
     execSync('git push', { stdio: 'inherit' });
     console.log('\n✅ Changes pushed to remote!\n');

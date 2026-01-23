@@ -47,9 +47,7 @@ function parseExistingFeed(feedXml) {
   return pubDates;
 }
 
-function generateFeedXml(items) {
-  const now = new Date().toUTCString();
-
+function generateFeedXml(items, lastBuildDate) {
   const itemsXml = items.map(item => `    <item>
       <title>${escapeXml(item.title)}</title>
       <link>${escapeXml(item.link)}</link>
@@ -64,7 +62,7 @@ function generateFeedXml(items) {
     <title>${escapeXml(FEED_TITLE)}</title>
     <link>${escapeXml(FEED_LINK)}</link>
     <description>${escapeXml(FEED_DESCRIPTION)}</description>
-    <lastBuildDate>${now}</lastBuildDate>
+    <lastBuildDate>${lastBuildDate}</lastBuildDate>
     <atom:link href="${escapeXml(FEED_LINK)}/feed.xml" rel="self" type="application/rss+xml"/>
 ${itemsXml}
   </channel>
@@ -77,12 +75,18 @@ function main() {
   const documentsJson = fs.readFileSync(DOCUMENTS_PATH, 'utf-8');
   const documents = JSON.parse(documentsJson);
 
-  // Read existing feed.xml to get historical pubDates
+  // Read existing feed.xml to get historical pubDates and lastBuildDate
   let existingPubDates = new Map();
+  let existingLastBuildDate = null;
 
   if (fs.existsSync(FEED_PATH)) {
     const existingFeed = fs.readFileSync(FEED_PATH, 'utf-8');
     existingPubDates = parseExistingFeed(existingFeed);
+    // Extract existing lastBuildDate
+    const lastBuildMatch = existingFeed.match(/<lastBuildDate>([^<]*)<\/lastBuildDate>/);
+    if (lastBuildMatch) {
+      existingLastBuildDate = lastBuildMatch[1];
+    }
     console.log(`Found ${existingPubDates.size} existing items in feed`);
   } else {
     console.log('No existing feed.xml found, creating new feed');
@@ -109,8 +113,12 @@ function main() {
     guid: doc.url
   }));
 
+  // Only update lastBuildDate if there are new documents or content changes
+  // This prevents timestamp-only divergence between local and remote
+  const lastBuildDate = newDocuments.length > 0 ? now : (existingLastBuildDate || now);
+
   // Generate and write the feed
-  const feedXml = generateFeedXml(allItems);
+  const feedXml = generateFeedXml(allItems, lastBuildDate);
   fs.writeFileSync(FEED_PATH, feedXml, 'utf-8');
 
   if (newDocuments.length > 0) {
