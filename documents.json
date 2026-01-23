@@ -1,0 +1,162 @@
+[
+  {
+    "title": "Compute transparency via verifiable memory exhaustion",
+    "url": "https://www.notion.so/Compute-transparency-via-verifiable-memory-exhaustion-27f60f987af080219c08f36894cf4e31",
+    "platform": "notion",
+    "author": "Daniel Reuter",
+    "description": "Technical approach to verifying AI compute usage through memory exhaustion signatures.",
+    "tags": ["software", "technical-paper"]
+  },
+  {
+    "title": "Verification Presentation",
+    "url": "https://docs.google.com/presentation/d/1VaRLbBvy-XFxz5Hb0hp0oZGoPBGhd1pfCURBWW0ewqA/edit?slide=id.g34516b14c8c_1_10#slide=id.g34516b14c8c_1_10",
+    "platform": "google-slides",
+    "author": "Mauricio Baker",
+    "description": "Overview presentation on AI verification concepts, approaches, and research directions.",
+    "tags": ["software", "firmware", "explainer", "strategy", "reading-list", "research-agenda"]
+  },
+  {
+    "title": "Engineering problem statements",
+    "url": "https://docs.google.com/document/d/1kvAUQfbYOK69UGmuhOlSm0k-bzW_bcR-82wZUdcCtKw/edit?tab=t.0",
+    "platform": "google-docs",
+    "author": "Thomas Milton",
+    "description": "Collection of engineering challenges and problem statements for AI verification research.",
+    "tags": ["research-agenda", "hardware"]
+  },
+  {
+    "title": "An approach to AI verification strategy",
+    "url": "https://docs.google.com/document/d/1kAxB7L0W8O9JDJmEFqVgBvACITSVQikW6st8FiyADpI/edit?tab=t.0#heading=h.84lzfs9acr84",
+    "platform": "google-docs",
+    "author": "Thomas Milton",
+    "description": "Strategic framework for implementing AI verification measures and governance.",
+    "tags": ["strategy"]
+  },
+  {
+    "title": "AI Verification Estimated Timelines and Backcasting",
+    "url": "https://docs.google.com/document/d/1EIUvjh0wffNcAwOT3bfDKBQ4g04Tj38iVZtNwkVrplQ/edit?tab=t.0",
+    "platform": "google-docs",
+    "author": "Ben Harack",
+    "description": "Timeline analysis and backward planning for AI verification milestones and implementation.",
+    "tags": ["strategy"]
+  },
+  {
+    "title": "Breaking Location Verification through IR-LVP",
+    "url": "https://docs.google.com/document/d/1eBS5f0XiR3LwPljJ5Ivsq9MHUrjlJLqQ0ykGF5P9Ea4/edit?tab=t.0#heading=h.cka6r683sp3r",
+    "platform": "google-docs",
+    "author": ["Jonathan Happel","Shahin Tajik","Jackson Dean"],
+    "description": "Methods to circumvent location verification systems, focusing on IR-LVP.",
+    "tags": ["technical-paper", "hardware"]
+  },
+  {
+    "title": "Concrete Verification Projects",
+    "url": "https://docs.google.com/document/d/10DsSGnaJwgvQVb42uHzIuOYTIn28wTnlWro7v9jdwyA/edit?tab=t.a1wh4rg8z65d",
+    "platform": "google-docs",
+    "author": "Yannick Mühlhäuser",
+    "description": "List of specific, actionable AI verification project proposals and implementation ideas.",
+    "tags": ["research-agenda"]
+  },
+  {
+    "title": "Verification Reading List",
+    "url": "https://docs.google.com/document/d/1qO27RmEqs3h2d5jEaLmdzkPv7HSg1ii9041FPJjj0Zc/edit?tab=t.0#heading=h.kcweidx1kpdb",
+    "platform": "google-docs",
+    "author": "Mauricio Baker",
+    "description": "A shared reading list of resources related to AI verification.",
+    "tags": ["reading-list"]
+  },
+  {
+    "title": "Verification - How You Can Get Involved",
+    "url": "https://docs.google.com/document/d/1pCB7-yLZ864RApEoy3cw7kSASHnj06gfCxH3tCzNBas/edit?tab=t.0#heading=h.giqv0ak8ze91",
+    "platform": "google-docs",
+    "author": "Mauricio Baker",
+    "description": "A collaborative resource about verification processes and community participation.",
+    "tags": ["explainer"]
+  },
+  {
+    "title": "Notes on Verification Strategy",
+    "url": "https://docs.google.com/document/d/1h8ESnMD9E5iWKczzaw_rmjLXS9k1fj3I-sbJ8x-EkbY/edit?tab=t.6g91mcrfmyye#heading=h.rpgiym1lv4yi",
+    "platform": "google-docs",
+    "author": "Romeo Dean",
+    "description": "Working notes and ideas on AI verification strategy development.",
+    "tags": ["strategy"]
+  },
+  {
+    "title": "Verification Proposals",
+    "url": "https://docs.google.com/document/d/1vP-K2IMh-FaRMEMztJWdXvBwkuJ4V9J6_NcKlFLPoVk/edit?tab=t.0#heading=h.79r98nognoia",
+    "platform": "google-docs",
+    "author": "Romeo Dean",
+    "description": "Methods and frameworks for verification processes.",
+    "tags": ["policy-proposal"]
+  },
+  {
+    "title": "Transparent accelerator workloads via sanitized re-execution",
+    "url": "https://www.notion.so/Transparent-accelerator-workloads-via-sanitized-re-execution-26d60f987af080289120ef769f068264",
+    "platform": "notion",
+    "author": ["Daniel Reuter","Luke Marks","Mauricio Baker"],
+    "description": "Technical method for verifying accelerator computations through sanitized replay mechanisms.",
+    "tags": ["software", "technical-paper"]
+  },
+  {
+    "title": "Verification MVP overview and updates - 10-23-25",
+    "url": "https://docs.google.com/document/d/1D6pZe8hw1bhWPi_taEpHzLVgNAcbwtUusQ6qttXJE7s/edit?tab=t.emeoo4hgmrke",
+    "platform": "google-docs",
+    "author": "Mauricio Baker",
+    "description": "A minimum viable product design for AI treaty verification with an update on the state of affairs.",
+    "tags": ["hardware","software","firmware","human-process","technical-paper","explainer","strategy","research-agenda"]
+  },
+  {
+    "title": "Questions in AI verification",
+    "url": "https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&viewControls=on",
+    "platform": "airtable",
+    "author": "",
+    "description": "Structured database tracking open questions in AI verification and associated work.",
+    "tags": ["hardware","software","firmware","human-process","research-agenda","reading-list"]
+  },
+  {
+    "title": "Memo: AI appliances for controlled deployment",
+    "url": "https://docs.google.com/document/d/1kDy21i4h9FteAslAVvCQ4EPBOrS3F4XYR64s4s8bzW4/edit?tab=t.0",
+    "platform": "google-docs",
+    "author": "Onni Aarne",
+    "description": "Policy memo on deploying AI systems in controlled, verifiable hardware environments.",
+    "tags": ["hardware"]
+  },
+  {
+    "title": "Near-term Verification Workshop",
+    "url": "https://docs.google.com/document/d/1GZJG8CVVFFYFZnojKvXSXRVPlr-wpkwOYOOBxrBFu6c/edit?tab=t.9ecu1qsb6pau",
+    "platform": "google-docs",
+    "author": "James Petrie",
+    "description": "Workshop materials and discussion on near-term AI verification approaches.",
+    "tags": ["strategy"]
+  },
+  {
+    "title": "Verifiable Compute Accounting on Untrusted Hardware using Proof of Memory",
+    "url": "https://www.notion.so/Verifiable-Compute-Accounting-on-Untrusted-Hardware-using-Proof-of-Memory-20d60f987af0803ea469efb696eb0540",
+    "platform": "notion",
+    "author": ["Daniel Reuter","Adam Karvonen"],
+    "description": "Technical proposal for tracking and verifying compute usage on untrusted hardware using memory proofs.",
+    "tags": ["hardware", "technical-paper"]
+  },
+  {
+    "title": "Towards neutral, safe, mutually-trusted compute",
+    "url": "https://docs.google.com/document/d/1VVduH4li7dVQgWmyutsH1IDeqyxE3xsW5xEvNwZWnTM/edit?tab=t.0",
+    "platform": "google-docs",
+    "author": "Yannick Mühlhäuser",
+    "description": "Vision document for creating trustworthy, neutral shared computing infrastructure for AI.",
+    "tags": ["research-agenda"]
+  },
+  {
+    "title": "Prospects for CC based AI Verification in International Contexts",
+    "url": "https://docs.google.com/document/d/1LKs31yGgOxkGv_wfPtEuf_Kb0v8EoBq3Ka1ZebdG7mk/edit?usp=sharing",
+    "platform": "google-docs",
+    "author": "",
+    "description": "Analysis of confidential computing approaches for AI verification across international jurisdictions.",
+    "tags": ["policy-proposal"]
+  },
+  {
+    "title": "Near Term Verification Thoughts",
+    "url": "https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0",
+    "platform": "google-docs",
+    "author": "Halfdan Holm",
+    "description": "Halfdan's one-pager explaining their excitement about near-term verification for AI governance and a framework for thinking about it.",
+    "tags": ["research-agenda","hardware","software"]
+  }
+]
