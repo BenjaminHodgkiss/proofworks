@@ -156,7 +156,7 @@
     return [...docs].sort((a, b) => {
       const orderA = a.order ?? -Infinity;
       const orderB = b.order ?? -Infinity;
-      return orderA - orderB;
+      return orderB - orderA;
     });
   }
 
