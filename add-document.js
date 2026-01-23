@@ -105,7 +105,8 @@ async function addDocument() {
     author: author.trim(),
     description: description.trim(),
     tags: tags,
-    order: newOrder
+    order: newOrder,
+    date_added: new Date().toISOString()
   };
 
   // Add to beginning of array (highest order first)
