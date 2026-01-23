@@ -19,6 +19,16 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
+function unescapeXml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&gt;/g, '>')
+    .replace(/&lt;/g, '<')
+    .replace(/&amp;/g, '&');
+}
+
 function parseExistingFeed(feedXml) {
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
@@ -26,7 +36,7 @@ function parseExistingFeed(feedXml) {
 
   while ((match = itemRegex.exec(feedXml)) !== null) {
     const itemXml = match[1];
-    const link = itemXml.match(/<link>([^<]*)<\/link>/)?.[1] || '';
+    const link = unescapeXml(itemXml.match(/<link>([^<]*)<\/link>/)?.[1] || '');
     const title = itemXml.match(/<title>([^<]*)<\/title>/)?.[1] || '';
     const description = itemXml.match(/<description>([^<]*)<\/description>/)?.[1] || '';
     const pubDate = itemXml.match(/<pubDate>([^<]*)<\/pubDate>/)?.[1] || '';
