@@ -4,8 +4,15 @@
     <title>AI Verification Documents</title>
     <link>https://proofworks.cc</link>
     <description>A shared collection of resources for AI verification researchers</description>
-    <lastBuildDate>Fri, 23 Jan 2026 19:50:11 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 23 Jan 2026 20:14:26 GMT</lastBuildDate>
     <atom:link href="https://proofworks.cc/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Test 6</title>
+      <link>no.com</link>
+      <description>nope</description>
+      <pubDate>Fri, 23 Jan 2026 20:14:26 GMT</pubDate>
+      <guid isPermaLink="true">no.com</guid>
+    </item>
     <item>
       <title>Test 5</title>
       <link>google.com</link>
@@ -32,7 +39,7 @@
       <link>https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;viewControls=on</link>
       <description>Structured database tracking open questions in AI verification and associated work.</description>
       <pubDate>Fri, 23 Jan 2026 15:03:15 GMT</pubDate>
-      <guid isPermaLink="true">https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;amp;amp;amp;amp;viewControls=on</guid>
+      <guid isPermaLink="true">https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;amp;amp;amp;amp;amp;viewControls=on</guid>
     </item>
     <item>
       <title>Test 2</title>
@@ -144,7 +151,7 @@
       <link>https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;amp;viewControls=on</link>
       <description>Structured database tracking open questions in AI verification and associated work.</description>
       <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
-      <guid isPermaLink="true">https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;amp;amp;amp;amp;amp;viewControls=on</guid>
+      <guid isPermaLink="true">https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;amp;amp;amp;amp;amp;amp;viewControls=on</guid>
     </item>
     <item>
       <title>Memo: AI appliances for controlled deployment</title>
@@ -184,7 +191,7 @@
     <item>
       <title>Near Term Verification Thoughts</title>
       <link>https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0</link>
-      <description>Halfdan&amp;amp;amp;amp;amp;apos;s one-pager explaining their excitement about near-term verification for AI governance and a framework for thinking about it.</description>
+      <description>Halfdan&amp;amp;amp;amp;amp;amp;apos;s one-pager explaining their excitement about near-term verification for AI governance and a framework for thinking about it.</description>
       <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
       <guid isPermaLink="true">https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0</guid>
     </item>
