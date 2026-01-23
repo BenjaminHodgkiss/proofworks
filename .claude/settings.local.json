@@ -10,7 +10,13 @@
       "Bash(curl:*)",
       "WebFetch(domain:www.nngroup.com)",
       "WebFetch(domain:www.smashingmagazine.com)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(xargs:*)",
+      "Bash(ls:*)",
+      "Bash(git push)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ]
   }
 }
