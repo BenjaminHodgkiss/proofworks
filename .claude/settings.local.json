@@ -18,7 +18,11 @@
       "Bash(git pull:*)",
       "Bash(git stash:*)",
       "Bash(chmod:*)",
-      "Bash(node add-document.js:*)"
+      "Bash(node add-document.js:*)",
+      "Bash(git show:*)",
+      "Bash(node generate-feed.js:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix double-escaping bug in RSS feed generation\n\nThe feed was accumulating escaped characters \\(e.g., &amp;amp;amp;\\) on each\nregeneration because content was parsed from the feed and re-escaped.\nNow documents.json is used as the source of truth for all content,\nwith the feed only preserving historical pubDates.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
