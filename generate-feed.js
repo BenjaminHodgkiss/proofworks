@@ -30,22 +30,21 @@ function unescapeXml(str) {
 }
 
 function parseExistingFeed(feedXml) {
-  const items = [];
+  const pubDates = new Map();
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   let match;
 
   while ((match = itemRegex.exec(feedXml)) !== null) {
     const itemXml = match[1];
     const link = unescapeXml(itemXml.match(/<link>([^<]*)<\/link>/)?.[1] || '');
-    const title = itemXml.match(/<title>([^<]*)<\/title>/)?.[1] || '';
-    const description = itemXml.match(/<description>([^<]*)<\/description>/)?.[1] || '';
     const pubDate = itemXml.match(/<pubDate>([^<]*)<\/pubDate>/)?.[1] || '';
-    const guid = itemXml.match(/<guid[^>]*>([^<]*)<\/guid>/)?.[1] || link;
 
-    items.push({ title, link, description, pubDate, guid });
+    if (link && pubDate) {
+      pubDates.set(link, pubDate);
+    }
   }
 
-  return items;
+  return pubDates;
 }
 
 function generateFeedXml(items) {
@@ -78,51 +77,46 @@ function main() {
   const documentsJson = fs.readFileSync(DOCUMENTS_PATH, 'utf-8');
   const documents = JSON.parse(documentsJson);
 
-  // Read existing feed.xml if it exists
-  let existingItems = [];
-  let existingUrls = new Set();
+  // Read existing feed.xml to get historical pubDates
+  let existingPubDates = new Map();
 
   if (fs.existsSync(FEED_PATH)) {
     const existingFeed = fs.readFileSync(FEED_PATH, 'utf-8');
-    existingItems = parseExistingFeed(existingFeed);
-    existingUrls = new Set(existingItems.map(item => item.link));
-    console.log(`Found ${existingItems.length} existing items in feed`);
+    existingPubDates = parseExistingFeed(existingFeed);
+    console.log(`Found ${existingPubDates.size} existing items in feed`);
   } else {
     console.log('No existing feed.xml found, creating new feed');
   }
 
   // Find new documents (URLs not already in feed)
-  const newDocuments = documents.filter(doc => !existingUrls.has(doc.url));
+  const newDocuments = documents.filter(doc => !existingPubDates.has(doc.url));
   console.log(`Found ${newDocuments.length} new documents to add`);
 
-  if (newDocuments.length === 0) {
-    console.log('No new documents to add, feed unchanged');
-    return;
+  // Write new documents to JSON file for email notifications (only if there are new ones)
+  if (newDocuments.length > 0) {
+    fs.writeFileSync(NEW_DOCS_PATH, JSON.stringify(newDocuments, null, 2), 'utf-8');
+    console.log(`Wrote ${newDocuments.length} new documents to new-documents.json`);
   }
 
-  // Write new documents to JSON file for email notifications
-  fs.writeFileSync(NEW_DOCS_PATH, JSON.stringify(newDocuments, null, 2), 'utf-8');
-  console.log(`Wrote ${newDocuments.length} new documents to new-documents.json`);
-
-  // Create items for new documents with current timestamp
+  // Create items for ALL documents from documents.json (source of truth)
+  // Use historical pubDate if available, otherwise current timestamp
   const now = new Date().toUTCString();
-  const newItems = newDocuments.map(doc => ({
+  const allItems = documents.map(doc => ({
     title: doc.title,
     link: doc.url,
     description: doc.description || '',
-    pubDate: now,
+    pubDate: existingPubDates.get(doc.url) || now,
     guid: doc.url
   }));
-
-  // Combine new items first (most recent), then existing items
-  const allItems = [...newItems, ...existingItems];
 
   // Generate and write the feed
   const feedXml = generateFeedXml(allItems);
   fs.writeFileSync(FEED_PATH, feedXml, 'utf-8');
 
-  console.log(`Added ${newItems.length} new items to feed`);
-  console.log(`Feed now contains ${allItems.length} total items`);
+  if (newDocuments.length > 0) {
+    console.log(`Added ${newDocuments.length} new items to feed`);
+  }
+  console.log(`Feed regenerated with ${allItems.length} total items`);
 }
 
 main();
