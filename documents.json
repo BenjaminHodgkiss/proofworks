@@ -1,5 +1,16 @@
 [
   {
+    "title": "Test 8",
+    "url": "8.com",
+    "platform": "notion",
+    "author": "me",
+    "description": "nope",
+    "tags": [
+      "hardware"
+    ],
+    "order": 290
+  },
+  {
     "title": "Test 7",
     "url": "7.com",
     "platform": "notion",
