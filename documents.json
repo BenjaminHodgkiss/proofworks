@@ -1,5 +1,15 @@
 [
   {
+    "title": "Sync Fix Test Document",
+    "url": "https://example.com/sync-fix-test",
+    "platform": "google-docs",
+    "author": "Test",
+    "description": "Testing that feed.xml sync fix works",
+    "tags": ["test"],
+    "order": 310,
+    "date_added": "2026-01-23T22:00:00.000Z"
+  },
+  {
     "title": "Test 9",
     "url": "9.com",
     "platform": "notion",
