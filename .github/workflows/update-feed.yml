@@ -40,3 +40,11 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: node send-emails.js
+
+      - name: Commit updated feed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add feed.xml
+          git diff --staged --quiet || git commit -m "Update RSS feed"
+          git push

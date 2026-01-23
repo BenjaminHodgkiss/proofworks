@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const readline = require('readline');
+const { execSync } = require('child_process');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -114,7 +115,17 @@ async function addDocument() {
 
   console.log('\n✅ Document added successfully!');
   console.log(`   Order: ${newOrder}`);
-  console.log('\n💡 Run "git add documents.json && git commit -m \'Add: ' + title.trim() + '\' && git push" to publish\n');
+
+  // Automatically commit and push
+  console.log('\n📤 Committing and pushing to git...');
+  try {
+    execSync('git add documents.json', { stdio: 'inherit' });
+    execSync(`git commit -m 'Add: ${title.trim()}'`, { stdio: 'inherit' });
+    execSync('git push', { stdio: 'inherit' });
+    console.log('\n✅ Changes pushed to remote!\n');
+  } catch (err) {
+    console.log('\n⚠️  Git operation failed. You may need to push manually.\n');
+  }
 
   rl.close();
 }

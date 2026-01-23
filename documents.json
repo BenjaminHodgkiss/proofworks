@@ -11,17 +11,6 @@
     "order": 280
   },
   {
-    "title": "Test 7",
-    "url": "7.com",
-    "platform": "notion",
-    "author": "me",
-    "description": "oh yeah",
-    "tags": [
-      "hardware"
-    ],
-    "order": 270
-  },
-  {
     "title": "Test 6",
     "url": "no.com",
     "platform": "google-docs",
