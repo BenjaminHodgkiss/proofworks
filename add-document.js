@@ -96,8 +96,6 @@ async function addDocument() {
   const tagsInput = await question('Tags (comma-separated): ');
   const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
 
-  const addDate = await question('Add current date_added? (y/n): ');
-
   // Build new document object
   const newDoc = {
     title: title.trim(),
@@ -109,11 +107,6 @@ async function addDocument() {
     order: newOrder
   };
 
-  // Add date_added if requested
-  if (addDate.toLowerCase() === 'y' || addDate.toLowerCase() === 'yes') {
-    newDoc.date_added = new Date().toISOString();
-  }
-
   // Add to beginning of array (highest order first)
   documents.unshift(newDoc);
 
@@ -121,9 +114,6 @@ async function addDocument() {
 
   console.log('\n✅ Document added successfully!');
   console.log(`   Order: ${newOrder}`);
-  if (newDoc.date_added) {
-    console.log(`   Date: ${newDoc.date_added}`);
-  }
   console.log('\n💡 Run "git add documents.json && git commit -m \'Add: ' + title.trim() + '\' && git push" to publish\n');
 
   rl.close();
