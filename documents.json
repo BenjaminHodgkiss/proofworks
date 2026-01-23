@@ -1,11 +1,25 @@
 [
   {
+    "title": "Test 10",
+    "url": "test10.com",
+    "platform": "notion",
+    "author": "Ben",
+    "description": "A test",
+    "tags": [
+      "hardware"
+    ],
+    "order": 320,
+    "date_added": "2026-01-23T21:26:01.010Z"
+  },
+  {
     "title": "Sync Fix Test Document",
     "url": "https://example.com/sync-fix-test",
     "platform": "google-docs",
     "author": "Test",
     "description": "Testing that feed.xml sync fix works",
-    "tags": ["test"],
+    "tags": [
+      "test"
+    ],
     "order": 310,
     "date_added": "2026-01-23T22:00:00.000Z"
   },
