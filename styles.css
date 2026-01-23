@@ -160,11 +160,41 @@ h1 {
 
 #subscribe-form {
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 #subscribe-form input[type="email"] {
-  flex: 1;
+  width: 100%;
+}
+
+.frequency-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.frequency-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.frequency-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.frequency-options input[type="radio"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+#subscribe-form > input[type="email"] {
   padding: 0.75rem 1rem;
   font-size: 0.95rem;
   border: 1px solid var(--border);
@@ -172,7 +202,7 @@ h1 {
   background: var(--bg-primary);
 }
 
-#subscribe-form input[type="email"]:focus {
+#subscribe-form > input[type="email"]:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-light);

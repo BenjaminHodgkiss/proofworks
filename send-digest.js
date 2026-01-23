@@ -1,10 +1,31 @@
 const fs = require('fs');
 const path = require('path');
 
-const NEW_DOCS_PATH = path.join(__dirname, 'new-documents.json');
+const DOCUMENTS_PATH = path.join(__dirname, 'documents.json');
 const SITE_URL = 'https://proofworks.cc';
 
+// Parse command line arguments
+function parseArgs() {
+  const args = process.argv.slice(2);
+  let frequency = null;
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--frequency' && args[i + 1]) {
+      frequency = args[i + 1];
+    }
+  }
+
+  if (!frequency || !['daily', 'weekly'].includes(frequency)) {
+    console.error('Usage: node send-digest.js --frequency daily|weekly');
+    process.exit(1);
+  }
+
+  return { frequency };
+}
+
 async function main() {
+  const { frequency } = parseArgs();
+
   // Check for required environment variables
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -15,26 +36,44 @@ async function main() {
     process.exit(1);
   }
 
-  // Check if new-documents.json exists
-  if (!fs.existsSync(NEW_DOCS_PATH)) {
-    console.log('No new-documents.json found, skipping email send');
-    return;
+  // Calculate the time window based on frequency
+  const now = new Date();
+  let sinceDate;
+
+  if (frequency === 'daily') {
+    sinceDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+  } else {
+    sinceDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
   }
 
-  // Read new documents
-  const newDocsJson = fs.readFileSync(NEW_DOCS_PATH, 'utf-8');
-  const newDocuments = JSON.parse(newDocsJson);
+  const sinceISO = sinceDate.toISOString();
+  console.log(`Looking for documents added since ${sinceISO}`);
+
+  // Read documents.json and filter by date_added
+  if (!fs.existsSync(DOCUMENTS_PATH)) {
+    console.error('documents.json not found');
+    process.exit(1);
+  }
+
+  const allDocuments = JSON.parse(fs.readFileSync(DOCUMENTS_PATH, 'utf-8'));
+
+  // Filter documents added within the time window
+  const newDocuments = allDocuments.filter(doc => {
+    if (!doc.date_added) return false;
+    const docDate = new Date(doc.date_added);
+    return docDate >= sinceDate;
+  });
 
   if (newDocuments.length === 0) {
-    console.log('No new documents to notify about');
+    console.log(`No new documents in the ${frequency} window`);
     return;
   }
 
-  console.log(`Sending notifications for ${newDocuments.length} new document(s)`);
+  console.log(`Found ${newDocuments.length} document(s) added in the ${frequency} window`);
 
-  // Fetch active subscribers who want immediate emails
+  // Fetch subscribers with matching frequency
   const subscribersResponse = await fetch(
-    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_frequency=eq.immediate&select=email,unsubscribe_token`,
+    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_frequency=eq.${frequency}&select=email,unsubscribe_token`,
     {
       headers: {
         'apikey': SUPABASE_SERVICE_ROLE_KEY,
@@ -49,7 +88,7 @@ async function main() {
   }
 
   const subscribers = await subscribersResponse.json();
-  console.log(`Found ${subscribers.length} active subscriber(s)`);
+  console.log(`Found ${subscribers.length} subscriber(s) with ${frequency} preference`);
 
   if (subscribers.length === 0) {
     console.log('No subscribers to notify');
@@ -57,12 +96,13 @@ async function main() {
   }
 
   // Generate email subject
+  const periodLabel = frequency === 'daily' ? 'Daily' : 'Weekly';
   const subject = newDocuments.length === 1
-    ? `New Document: ${newDocuments[0].title}`
-    : `${newDocuments.length} New AI Verification Documents`;
+    ? `${periodLabel} Digest: ${newDocuments[0].title}`
+    : `${periodLabel} Digest: ${newDocuments.length} New AI Verification Documents`;
 
   // Generate email HTML
-  const emailHtml = generateEmailHtml(newDocuments);
+  const emailHtml = generateDigestEmailHtml(newDocuments, frequency);
 
   // Send emails to each subscriber
   let successCount = 0;
@@ -107,13 +147,12 @@ async function main() {
   }
 
   console.log(`Email sending complete: ${successCount} sent, ${errorCount} failed`);
-
-  // Clean up new-documents.json
-  fs.unlinkSync(NEW_DOCS_PATH);
-  console.log('Cleaned up new-documents.json');
 }
 
-function generateEmailHtml(documents) {
+function generateDigestEmailHtml(documents, frequency) {
+  const periodLabel = frequency === 'daily' ? 'Daily' : 'Weekly';
+  const periodDescription = frequency === 'daily' ? 'the past 24 hours' : 'the past week';
+
   const documentsList = documents.map(doc => {
     const author = Array.isArray(doc.author) ? doc.author.join(', ') : (doc.author || 'Unknown');
     return `
@@ -135,7 +174,10 @@ function generateEmailHtml(documents) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-  <h1 style="color: #5b8a8a; font-size: 24px; margin-bottom: 24px;">New AI Verification Documents</h1>
+  <h1 style="color: #5b8a8a; font-size: 24px; margin-bottom: 8px;">${periodLabel} Digest</h1>
+  <p style="color: #666; font-size: 14px; margin-top: 0; margin-bottom: 24px;">
+    ${documents.length} new document${documents.length === 1 ? '' : 's'} added in ${periodDescription}
+  </p>
 
   ${documentsList}
 
@@ -146,7 +188,7 @@ function generateEmailHtml(documents) {
   <hr style="margin: 32px 0; border: none; border-top: 1px solid #eee;">
 
   <p style="font-size: 12px; color: #999;">
-    You're receiving this because you subscribed to AI Verification Document updates.
+    You're receiving this ${frequency} digest because you subscribed to AI Verification Document updates.
     <br><a href="{{UNSUBSCRIBE_URL}}" style="color: #999;">Unsubscribe</a>
   </p>
 </body>

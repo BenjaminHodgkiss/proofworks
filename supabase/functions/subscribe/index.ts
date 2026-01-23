@@ -6,6 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+const VALID_FREQUENCIES = ['immediate', 'daily', 'weekly']
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -20,7 +22,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { email } = await req.json()
+    const { email, frequency = 'immediate' } = await req.json()
 
     if (!email || typeof email !== 'string') {
       return new Response(
@@ -38,25 +40,65 @@ Deno.serve(async (req) => {
       )
     }
 
+    // Validate frequency
+    if (!VALID_FREQUENCIES.includes(frequency)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid frequency. Must be: immediate, daily, or weekly' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Upsert subscriber (reactivate if previously unsubscribed)
-    const { error } = await supabase
-      .from('subscribers')
-      .upsert(
-        { email: email.toLowerCase(), is_active: true },
-        { onConflict: 'email' }
-      )
+    const normalizedEmail = email.toLowerCase()
 
-    if (error) {
-      console.error('Database error:', error)
-      return new Response(
-        JSON.stringify({ error: 'Failed to subscribe' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    // Check if subscriber already exists
+    const { data: existing } = await supabase
+      .from('subscribers')
+      .select('id, unsubscribe_token')
+      .eq('email', normalizedEmail)
+      .single()
+
+    if (existing) {
+      // Update existing subscriber (reactivate and update frequency)
+      const { error } = await supabase
+        .from('subscribers')
+        .update({
+          is_active: true,
+          email_frequency: frequency,
+          // Generate token if missing
+          unsubscribe_token: existing.unsubscribe_token || crypto.randomUUID()
+        })
+        .eq('email', normalizedEmail)
+
+      if (error) {
+        console.error('Database error:', error)
+        return new Response(
+          JSON.stringify({ error: 'Failed to subscribe' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    } else {
+      // Insert new subscriber with unsubscribe token
+      const { error } = await supabase
+        .from('subscribers')
+        .insert({
+          email: normalizedEmail,
+          is_active: true,
+          email_frequency: frequency,
+          unsubscribe_token: crypto.randomUUID()
+        })
+
+      if (error) {
+        console.error('Database error:', error)
+        return new Response(
+          JSON.stringify({ error: 'Failed to subscribe' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
     }
 
     return new Response(

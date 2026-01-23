@@ -350,6 +350,7 @@
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
+    const frequency = form.frequency.value;
     const button = form.querySelector('button');
     const originalText = button.textContent;
     const supabaseUrl = form.dataset.supabaseUrl;
@@ -361,7 +362,7 @@
       const response = await fetch(`${supabaseUrl}/functions/v1/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, frequency })
       });
 
       const data = await response.json();
