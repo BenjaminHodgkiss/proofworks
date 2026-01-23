@@ -42,9 +42,9 @@ async function main() {
 
   console.log(`Sending notifications for ${newDocuments.length} new document(s)`);
 
-  // Fetch active subscribers who want immediate emails
+  // Fetch active and verified subscribers who want immediate emails
   const subscribersResponse = await fetch(
-    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_frequency=eq.immediate&select=email,unsubscribe_token`,
+    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_verified=eq.true&email_frequency=eq.immediate&select=email,unsubscribe_token,preferences_token`,
     {
       headers: {
         'apikey': SUPABASE_SERVICE_ROLE_KEY,
@@ -59,7 +59,7 @@ async function main() {
   }
 
   const subscribers = await subscribersResponse.json();
-  console.log(`Found ${subscribers.length} active subscriber(s)`);
+  console.log(`Found ${subscribers.length} active verified subscriber(s)`);
 
   if (subscribers.length === 0) {
     console.log('No subscribers to notify');
@@ -79,10 +79,12 @@ async function main() {
   let errorCount = 0;
 
   for (const subscriber of subscribers) {
-    const personalizedHtml = emailHtml.replace(
-      '{{UNSUBSCRIBE_URL}}',
-      `${SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`
-    );
+    const unsubscribeUrl = `${SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`;
+    const preferencesUrl = `${SITE_URL}/preferences.html?token=${subscriber.preferences_token}`;
+
+    const personalizedHtml = emailHtml
+      .replace('{{UNSUBSCRIBE_URL}}', unsubscribeUrl)
+      .replace('{{PREFERENCES_URL}}', preferencesUrl);
 
     try {
       const response = await fetch('https://api.resend.com/emails', {
@@ -153,7 +155,7 @@ function generateEmailHtml(documents) {
 
   <p style="font-size: 12px; color: #999;">
     You're receiving this because you subscribed to AI Verification Document updates.
-    <br><a href="{{UNSUBSCRIBE_URL}}" style="color: #999;">Unsubscribe</a>
+    <br><a href="{{PREFERENCES_URL}}" style="color: #999;">Manage preferences</a> · <a href="{{UNSUBSCRIBE_URL}}" style="color: #999;">Unsubscribe</a>
   </p>
 </body>
 </html>

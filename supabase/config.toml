@@ -1,0 +1,16 @@
+# Supabase configuration
+
+[api]
+enabled = true
+
+[functions.subscribe]
+verify_jwt = false
+
+[functions.unsubscribe]
+verify_jwt = false
+
+[functions.verify-email]
+verify_jwt = false
+
+[functions.preferences]
+verify_jwt = false

@@ -1,4 +1,13 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { sendEmail } from '../_shared/send-email.ts'
+import {
+  verificationEmail,
+  welcomeBackEmail,
+  frequencyChangeEmail
+} from '../_shared/email-templates.ts'
+
+const SITE_URL = 'https://proofworks.cc'
+const VERIFICATION_EXPIRY_HOURS = 24
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -58,21 +67,111 @@ Deno.serve(async (req) => {
     // Check if subscriber already exists
     const { data: existing } = await supabase
       .from('subscribers')
-      .select('id, unsubscribe_token')
+      .select('id, unsubscribe_token, preferences_token, is_active, email_verified, email_frequency')
       .eq('email', normalizedEmail)
       .single()
 
     if (existing) {
-      // Update existing subscriber (reactivate and update frequency)
+      // Case 1: Active and verified subscriber changing frequency
+      if (existing.is_active && existing.email_verified) {
+        if (existing.email_frequency === frequency) {
+          // No change needed
+          return new Response(
+            JSON.stringify({
+              success: true,
+              message: 'You are already subscribed with this frequency.',
+              requiresVerification: false
+            }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Update frequency
+        const { error } = await supabase
+          .from('subscribers')
+          .update({ email_frequency: frequency })
+          .eq('id', existing.id)
+
+        if (error) {
+          console.error('Database error:', error)
+          return new Response(
+            JSON.stringify({ error: 'Failed to update subscription' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Send frequency change confirmation
+        const preferencesUrl = `${SITE_URL}/preferences.html?token=${existing.preferences_token}`
+        await sendEmail({
+          to: normalizedEmail,
+          subject: 'Your subscription preferences have been updated',
+          html: frequencyChangeEmail(frequency, preferencesUrl)
+        })
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: 'Preferences updated!',
+            requiresVerification: false
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      // Case 2: Previously unsubscribed but was verified - reactivate immediately
+      if (!existing.is_active && existing.email_verified) {
+        const preferencesToken = existing.preferences_token || crypto.randomUUID()
+
+        const { error } = await supabase
+          .from('subscribers')
+          .update({
+            is_active: true,
+            email_frequency: frequency,
+            preferences_token: preferencesToken
+          })
+          .eq('id', existing.id)
+
+        if (error) {
+          console.error('Database error:', error)
+          return new Response(
+            JSON.stringify({ error: 'Failed to resubscribe' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+
+        // Send welcome back email
+        const preferencesUrl = `${SITE_URL}/preferences.html?token=${preferencesToken}`
+        await sendEmail({
+          to: normalizedEmail,
+          subject: 'Welcome back to AI Verification Documents',
+          html: welcomeBackEmail(frequency, preferencesUrl)
+        })
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: 'Welcome back! Your subscription is active.',
+            requiresVerification: false
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      // Case 3: Never verified (or inactive and unverified) - send new verification email
+      const verificationToken = crypto.randomUUID()
+      const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
+      const preferencesToken = existing.preferences_token || crypto.randomUUID()
+
       const { error } = await supabase
         .from('subscribers')
         .update({
-          is_active: true,
           email_frequency: frequency,
-          // Generate token if missing
+          verification_token: verificationToken,
+          verification_token_expires_at: expiresAt,
+          preferences_token: preferencesToken,
           unsubscribe_token: existing.unsubscribe_token || crypto.randomUUID()
         })
-        .eq('email', normalizedEmail)
+        .eq('id', existing.id)
 
       if (error) {
         console.error('Database error:', error)
@@ -81,28 +180,66 @@ Deno.serve(async (req) => {
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
-    } else {
-      // Insert new subscriber with unsubscribe token
-      const { error } = await supabase
-        .from('subscribers')
-        .insert({
-          email: normalizedEmail,
-          is_active: true,
-          email_frequency: frequency,
-          unsubscribe_token: crypto.randomUUID()
-        })
 
-      if (error) {
-        console.error('Database error:', error)
-        return new Response(
-          JSON.stringify({ error: 'Failed to subscribe' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
+      // Send verification email
+      const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
+      await sendEmail({
+        to: normalizedEmail,
+        subject: 'Verify your subscription to AI Verification Documents',
+        html: verificationEmail(verifyUrl)
+      })
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Check your email to verify your subscription.',
+          requiresVerification: true
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
+    // New subscriber - create with verification required
+    const verificationToken = crypto.randomUUID()
+    const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
+    const preferencesToken = crypto.randomUUID()
+    const unsubscribeToken = crypto.randomUUID()
+
+    const { error } = await supabase
+      .from('subscribers')
+      .insert({
+        email: normalizedEmail,
+        is_active: false, // Will be set to true upon verification
+        email_frequency: frequency,
+        email_verified: false,
+        verification_token: verificationToken,
+        verification_token_expires_at: expiresAt,
+        preferences_token: preferencesToken,
+        unsubscribe_token: unsubscribeToken
+      })
+
+    if (error) {
+      console.error('Database error:', error)
+      return new Response(
+        JSON.stringify({ error: 'Failed to subscribe' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Send verification email
+    const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
+    await sendEmail({
+      to: normalizedEmail,
+      subject: 'Verify your subscription to AI Verification Documents',
+      html: verificationEmail(verifyUrl)
+    })
+
     return new Response(
-      JSON.stringify({ success: true, message: 'Successfully subscribed!' }),
+      JSON.stringify({
+        success: true,
+        message: 'Check your email to verify your subscription.',
+        requiresVerification: true
+      }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {

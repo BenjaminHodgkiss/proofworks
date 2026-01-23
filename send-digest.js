@@ -71,9 +71,9 @@ async function main() {
 
   console.log(`Found ${newDocuments.length} document(s) added in the ${frequency} window`);
 
-  // Fetch subscribers with matching frequency
+  // Fetch active and verified subscribers with matching frequency
   const subscribersResponse = await fetch(
-    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_frequency=eq.${frequency}&select=email,unsubscribe_token`,
+    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_verified=eq.true&email_frequency=eq.${frequency}&select=email,unsubscribe_token,preferences_token`,
     {
       headers: {
         'apikey': SUPABASE_SERVICE_ROLE_KEY,
@@ -88,7 +88,7 @@ async function main() {
   }
 
   const subscribers = await subscribersResponse.json();
-  console.log(`Found ${subscribers.length} subscriber(s) with ${frequency} preference`);
+  console.log(`Found ${subscribers.length} verified subscriber(s) with ${frequency} preference`);
 
   if (subscribers.length === 0) {
     console.log('No subscribers to notify');
@@ -109,10 +109,12 @@ async function main() {
   let errorCount = 0;
 
   for (const subscriber of subscribers) {
-    const personalizedHtml = emailHtml.replace(
-      '{{UNSUBSCRIBE_URL}}',
-      `${SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`
-    );
+    const unsubscribeUrl = `${SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`;
+    const preferencesUrl = `${SITE_URL}/preferences.html?token=${subscriber.preferences_token}`;
+
+    const personalizedHtml = emailHtml
+      .replace('{{UNSUBSCRIBE_URL}}', unsubscribeUrl)
+      .replace('{{PREFERENCES_URL}}', preferencesUrl);
 
     try {
       const response = await fetch('https://api.resend.com/emails', {
@@ -189,7 +191,7 @@ function generateDigestEmailHtml(documents, frequency) {
 
   <p style="font-size: 12px; color: #999;">
     You're receiving this ${frequency} digest because you subscribed to AI Verification Document updates.
-    <br><a href="{{UNSUBSCRIBE_URL}}" style="color: #999;">Unsubscribe</a>
+    <br><a href="{{PREFERENCES_URL}}" style="color: #999;">Manage preferences</a> · <a href="{{UNSUBSCRIBE_URL}}" style="color: #999;">Unsubscribe</a>
   </p>
 </body>
 </html>

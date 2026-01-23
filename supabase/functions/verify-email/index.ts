@@ -1,13 +1,15 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/send-email.ts'
-import { unsubscribeConfirmationEmail } from '../_shared/email-templates.ts'
+import { welcomeEmail } from '../_shared/email-templates.ts'
+
+const SITE_URL = 'https://proofworks.cc'
 
 Deno.serve(async (req) => {
   const url = new URL(req.url)
   const token = url.searchParams.get('token')
 
   if (!token) {
-    return new Response(renderHtml('Error', 'Invalid unsubscribe link.'), {
+    return new Response(renderHtml('Error', 'Invalid verification link.'), {
       status: 400,
       headers: { 'Content-Type': 'text/html' }
     })
@@ -18,32 +20,49 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-  // Get subscriber info first
+  // Find subscriber with this verification token
   const { data: subscriber, error: fetchError } = await supabase
     .from('subscribers')
-    .select('id, email, is_active')
-    .eq('unsubscribe_token', token)
+    .select('id, email, email_frequency, verification_token_expires_at, email_verified, preferences_token')
+    .eq('verification_token', token)
     .single()
 
   if (fetchError || !subscriber) {
-    return new Response(renderHtml('Error', 'Invalid or expired unsubscribe link.'), {
+    return new Response(renderHtml('Error', 'Invalid or expired verification link.'), {
       status: 404,
       headers: { 'Content-Type': 'text/html' }
     })
   }
 
-  // Check if already unsubscribed
-  if (!subscriber.is_active) {
-    return new Response(renderHtml('Already Unsubscribed', 'You have already been unsubscribed from AI Verification Document updates.'), {
+  // Check if already verified
+  if (subscriber.email_verified) {
+    return new Response(renderHtml('Already Verified', 'Your email has already been verified. You\'re all set!'), {
       status: 200,
       headers: { 'Content-Type': 'text/html' }
     })
   }
 
-  // Mark subscriber as inactive
+  // Check if token has expired
+  if (subscriber.verification_token_expires_at) {
+    const expiresAt = new Date(subscriber.verification_token_expires_at)
+    if (expiresAt < new Date()) {
+      return new Response(renderHtml('Link Expired', 'This verification link has expired. Please subscribe again to receive a new link.'), {
+        status: 410,
+        headers: { 'Content-Type': 'text/html' }
+      })
+    }
+  }
+
+  // Mark as verified
   const { error: updateError } = await supabase
     .from('subscribers')
-    .update({ is_active: false })
+    .update({
+      email_verified: true,
+      verified_at: new Date().toISOString(),
+      verification_token: null,
+      verification_token_expires_at: null,
+      is_active: true
+    })
     .eq('id', subscriber.id)
 
   if (updateError) {
@@ -54,15 +73,18 @@ Deno.serve(async (req) => {
     })
   }
 
-  // Send confirmation email
+  // Send welcome email
+  const preferencesUrl = `${SITE_URL}/preferences.html?token=${subscriber.preferences_token}`
+  const welcomeHtml = welcomeEmail(subscriber.email_frequency, preferencesUrl)
+
   await sendEmail({
     to: subscriber.email,
-    subject: "You've been unsubscribed",
-    html: unsubscribeConfirmationEmail()
+    subject: 'Welcome to AI Verification Documents',
+    html: welcomeHtml
   })
 
   return new Response(
-    renderHtml('Unsubscribed', 'You have been successfully unsubscribed from AI Verification Document updates.'),
+    renderHtml('Email Verified', 'Your subscription is now active. You\'ll start receiving updates based on your chosen frequency.'),
     {
       status: 200,
       headers: { 'Content-Type': 'text/html' }
@@ -109,13 +131,26 @@ function renderHtml(title: string, message: string): string {
     a:hover {
       text-decoration: underline;
     }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #5b8a8a;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 16px;
+    }
+    .btn:hover {
+      background-color: #4a7979;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>${title}</h1>
     <p>${message}</p>
-    <p><a href="https://proofworks.cc">Return to AI Verification Documents</a></p>
+    <a href="${SITE_URL}" class="btn">Browse Documents</a>
   </div>
 </body>
 </html>

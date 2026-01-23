@@ -368,13 +368,23 @@
       const data = await response.json();
 
       if (response.ok && data.success) {
-        button.textContent = 'Subscribed!';
-        form.email.value = '';
-        setTimeout(() => {
-          modalOverlay.classList.remove('visible');
-          button.textContent = originalText;
-          button.disabled = false;
-        }, 1500);
+        if (data.requiresVerification) {
+          button.textContent = 'Check your email!';
+          form.email.value = '';
+          setTimeout(() => {
+            modalOverlay.classList.remove('visible');
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 2500);
+        } else {
+          button.textContent = data.message || 'Subscribed!';
+          form.email.value = '';
+          setTimeout(() => {
+            modalOverlay.classList.remove('visible');
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 1500);
+        }
       } else {
         throw new Error(data.error || 'Subscription failed');
       }

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Preferences - AI Verification Documents</title>
+  <style>
+    :root {
+      --bg-primary: #faf9f7;
+      --bg-card: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #64748b;
+      --accent: #5b8a8a;
+      --accent-light: #e8f0f0;
+      --accent-hover: #4a7373;
+      --border: #e2e8f0;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      --radius: 8px;
+      --transition: 0.2s ease;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      color: var(--text-primary);
+    }
+
+    .email-display {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin: 0 0 1.5rem 0;
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .frequency-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .frequency-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .frequency-option:hover {
+      border-color: var(--accent);
+    }
+
+    .frequency-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .frequency-option input[type="radio"] {
+      accent-color: var(--accent);
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+    }
+
+    .frequency-option label {
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .frequency-option .label-title {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .frequency-option .label-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--error);
+      border: 1px solid var(--error);
+      margin-top: 1rem;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: var(--error-bg);
+    }
+
+    .message {
+      padding: 0.875rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .message.visible {
+      display: block;
+    }
+
+    .message.error {
+      background: var(--error-bg);
+      color: var(--error);
+    }
+
+    .message.success {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .unsubscribed-state {
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    .unsubscribed-state p {
+      margin: 0 0 1rem 0;
+      color: var(--text-secondary);
+    }
+
+    #content {
+      display: none;
+    }
+
+    #content.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading your preferences...</p>
+      </div>
+
+      <div id="error-state" style="display: none; text-align: center; padding: 1rem 0;">
+        <h1>Unable to Load Preferences</h1>
+        <p style="color: var(--text-secondary);">This link may be invalid or expired.</p>
+        <a href="https://proofworks.cc" class="back-link">Return to AI Verification Documents</a>
+      </div>
+
+      <div id="content">
+        <h1>Manage Preferences</h1>
+        <p id="email-display" class="email-display"></p>
+
+        <div id="message" class="message"></div>
+
+        <div id="active-state">
+          <span class="section-label">Email frequency</span>
+          <div class="frequency-options" id="frequency-options">
+            <div class="frequency-option" data-value="immediate">
+              <input type="radio" name="frequency" value="immediate" id="freq-immediate">
+              <label for="freq-immediate">
+                <div class="label-title">Immediately</div>
+                <div class="label-desc">Get notified as soon as documents are added</div>
+              </label>
+            </div>
+            <div class="frequency-option" data-value="daily">
+              <input type="radio" name="frequency" value="daily" id="freq-daily">
+              <label for="freq-daily">
+                <div class="label-title">Daily digest</div>
+                <div class="label-desc">A summary of new documents each day</div>
+              </label>
+            </div>
+            <div class="frequency-option" data-value="weekly">
+              <input type="radio" name="frequency" value="weekly" id="freq-weekly">
+              <label for="freq-weekly">
+                <div class="label-title">Weekly digest</div>
+                <div class="label-desc">A summary of new documents each Monday</div>
+              </label>
+            </div>
+          </div>
+
+          <button id="save-btn" class="btn btn-primary" disabled>Save Changes</button>
+          <button id="unsubscribe-btn" class="btn btn-danger">Unsubscribe</button>
+        </div>
+
+        <div id="unsubscribed-state" class="unsubscribed-state" style="display: none;">
+          <p>You are currently unsubscribed from email updates.</p>
+          <a href="https://proofworks.cc" class="btn btn-primary" style="display: inline-block; text-decoration: none;">Resubscribe</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="https://proofworks.cc" class="back-link">Back to AI Verification Documents</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://jsbmozalhtxnekufeals.supabase.co';
+
+    const loadingEl = document.getElementById('loading');
+    const errorStateEl = document.getElementById('error-state');
+    const contentEl = document.getElementById('content');
+    const activeStateEl = document.getElementById('active-state');
+    const unsubscribedStateEl = document.getElementById('unsubscribed-state');
+    const emailDisplayEl = document.getElementById('email-display');
+    const messageEl = document.getElementById('message');
+    const saveBtnEl = document.getElementById('save-btn');
+    const unsubscribeBtnEl = document.getElementById('unsubscribe-btn');
+    const frequencyOptionsEl = document.getElementById('frequency-options');
+
+    let currentFrequency = null;
+    let token = null;
+
+    // Get token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    token = urlParams.get('token');
+
+    if (!token) {
+      showError();
+    } else {
+      loadPreferences();
+    }
+
+    async function loadPreferences() {
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/preferences?token=${token}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError();
+          return;
+        }
+
+        loadingEl.style.display = 'none';
+        contentEl.classList.add('visible');
+
+        emailDisplayEl.textContent = data.email;
+        currentFrequency = data.frequency;
+
+        if (!data.is_active) {
+          activeStateEl.style.display = 'none';
+          unsubscribedStateEl.style.display = 'block';
+          return;
+        }
+
+        // Set current frequency
+        selectFrequency(currentFrequency);
+
+      } catch (err) {
+        console.error('Error loading preferences:', err);
+        showError();
+      }
+    }
+
+    function showError() {
+      loadingEl.style.display = 'none';
+      errorStateEl.style.display = 'block';
+    }
+
+    function selectFrequency(value) {
+      document.querySelectorAll('.frequency-option').forEach(opt => {
+        const radio = opt.querySelector('input[type="radio"]');
+        const isSelected = opt.dataset.value === value;
+        opt.classList.toggle('selected', isSelected);
+        radio.checked = isSelected;
+      });
+      updateSaveButton();
+    }
+
+    function updateSaveButton() {
+      const selectedRadio = document.querySelector('input[name="frequency"]:checked');
+      const hasChanged = selectedRadio && selectedRadio.value !== currentFrequency;
+      saveBtnEl.disabled = !hasChanged;
+    }
+
+    function showMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = `message visible ${type}`;
+    }
+
+    function hideMessage() {
+      messageEl.className = 'message';
+    }
+
+    // Click handlers for frequency options
+    frequencyOptionsEl.addEventListener('click', (e) => {
+      const option = e.target.closest('.frequency-option');
+      if (option) {
+        selectFrequency(option.dataset.value);
+      }
+    });
+
+    // Save button handler
+    saveBtnEl.addEventListener('click', async () => {
+      const selectedRadio = document.querySelector('input[name="frequency"]:checked');
+      if (!selectedRadio) return;
+
+      saveBtnEl.disabled = true;
+      saveBtnEl.textContent = 'Saving...';
+      hideMessage();
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/preferences?token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ frequency: selectedRadio.value })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          currentFrequency = selectedRadio.value;
+          showMessage('Your preferences have been updated.', 'success');
+          updateSaveButton();
+        } else {
+          showMessage(data.error || 'Failed to update preferences.', 'error');
+        }
+      } catch (err) {
+        console.error('Error saving preferences:', err);
+        showMessage('Something went wrong. Please try again.', 'error');
+      }
+
+      saveBtnEl.textContent = 'Save Changes';
+    });
+
+    // Unsubscribe button handler
+    unsubscribeBtnEl.addEventListener('click', async () => {
+      if (!confirm('Are you sure you want to unsubscribe from all email updates?')) {
+        return;
+      }
+
+      unsubscribeBtnEl.disabled = true;
+      unsubscribeBtnEl.textContent = 'Unsubscribing...';
+      hideMessage();
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/preferences?token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'unsubscribe' })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          activeStateEl.style.display = 'none';
+          unsubscribedStateEl.style.display = 'block';
+          showMessage('You have been unsubscribed.', 'success');
+        } else {
+          showMessage(data.error || 'Failed to unsubscribe.', 'error');
+          unsubscribeBtnEl.disabled = false;
+          unsubscribeBtnEl.textContent = 'Unsubscribe';
+        }
+      } catch (err) {
+        console.error('Error unsubscribing:', err);
+        showMessage('Something went wrong. Please try again.', 'error');
+        unsubscribeBtnEl.disabled = false;
+        unsubscribeBtnEl.textContent = 'Unsubscribe';
+      }
+    });
+  </script>
+</body>
+</html>
