@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AI Verification Documents</title>
+    <link>https://example.com</link>
+    <description>A shared collection of resources for AI verification researchers</description>
+    <lastBuildDate>Fri, 23 Jan 2026 14:50:22 GMT</lastBuildDate>
+    <atom:link href="https://example.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Test 1</title>
+      <link>https://www.theatlantic.com/world/</link>
+      <description>test</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://www.theatlantic.com/world/</guid>
+    </item>
+    <item>
+      <title>Compute transparency via verifiable memory exhaustion</title>
+      <link>https://www.notion.so/Compute-transparency-via-verifiable-memory-exhaustion-27f60f987af080219c08f36894cf4e31</link>
+      <description>Technical approach to verifying AI compute usage through memory exhaustion signatures.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://www.notion.so/Compute-transparency-via-verifiable-memory-exhaustion-27f60f987af080219c08f36894cf4e31</guid>
+    </item>
+    <item>
+      <title>Verification Presentation</title>
+      <link>https://docs.google.com/presentation/d/1VaRLbBvy-XFxz5Hb0hp0oZGoPBGhd1pfCURBWW0ewqA/edit?slide=id.g34516b14c8c_1_10#slide=id.g34516b14c8c_1_10</link>
+      <description>Overview presentation on AI verification concepts, approaches, and research directions.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/presentation/d/1VaRLbBvy-XFxz5Hb0hp0oZGoPBGhd1pfCURBWW0ewqA/edit?slide=id.g34516b14c8c_1_10#slide=id.g34516b14c8c_1_10</guid>
+    </item>
+    <item>
+      <title>Engineering problem statements</title>
+      <link>https://docs.google.com/document/d/1kvAUQfbYOK69UGmuhOlSm0k-bzW_bcR-82wZUdcCtKw/edit?tab=t.0</link>
+      <description>Collection of engineering challenges and problem statements for AI verification research.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1kvAUQfbYOK69UGmuhOlSm0k-bzW_bcR-82wZUdcCtKw/edit?tab=t.0</guid>
+    </item>
+    <item>
+      <title>An approach to AI verification strategy</title>
+      <link>https://docs.google.com/document/d/1kAxB7L0W8O9JDJmEFqVgBvACITSVQikW6st8FiyADpI/edit?tab=t.0#heading=h.84lzfs9acr84</link>
+      <description>Strategic framework for implementing AI verification measures and governance.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1kAxB7L0W8O9JDJmEFqVgBvACITSVQikW6st8FiyADpI/edit?tab=t.0#heading=h.84lzfs9acr84</guid>
+    </item>
+    <item>
+      <title>AI Verification Estimated Timelines and Backcasting</title>
+      <link>https://docs.google.com/document/d/1EIUvjh0wffNcAwOT3bfDKBQ4g04Tj38iVZtNwkVrplQ/edit?tab=t.0</link>
+      <description>Timeline analysis and backward planning for AI verification milestones and implementation.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1EIUvjh0wffNcAwOT3bfDKBQ4g04Tj38iVZtNwkVrplQ/edit?tab=t.0</guid>
+    </item>
+    <item>
+      <title>Breaking Location Verification through IR-LVP</title>
+      <link>https://docs.google.com/document/d/1eBS5f0XiR3LwPljJ5Ivsq9MHUrjlJLqQ0ykGF5P9Ea4/edit?tab=t.0#heading=h.cka6r683sp3r</link>
+      <description>Methods to circumvent location verification systems, focusing on IR-LVP.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1eBS5f0XiR3LwPljJ5Ivsq9MHUrjlJLqQ0ykGF5P9Ea4/edit?tab=t.0#heading=h.cka6r683sp3r</guid>
+    </item>
+    <item>
+      <title>Concrete Verification Projects</title>
+      <link>https://docs.google.com/document/d/10DsSGnaJwgvQVb42uHzIuOYTIn28wTnlWro7v9jdwyA/edit?tab=t.a1wh4rg8z65d</link>
+      <description>List of specific, actionable AI verification project proposals and implementation ideas.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/10DsSGnaJwgvQVb42uHzIuOYTIn28wTnlWro7v9jdwyA/edit?tab=t.a1wh4rg8z65d</guid>
+    </item>
+    <item>
+      <title>Verification Reading List</title>
+      <link>https://docs.google.com/document/d/1qO27RmEqs3h2d5jEaLmdzkPv7HSg1ii9041FPJjj0Zc/edit?tab=t.0#heading=h.kcweidx1kpdb</link>
+      <description>A shared reading list of resources related to AI verification.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1qO27RmEqs3h2d5jEaLmdzkPv7HSg1ii9041FPJjj0Zc/edit?tab=t.0#heading=h.kcweidx1kpdb</guid>
+    </item>
+    <item>
+      <title>Verification - How You Can Get Involved</title>
+      <link>https://docs.google.com/document/d/1pCB7-yLZ864RApEoy3cw7kSASHnj06gfCxH3tCzNBas/edit?tab=t.0#heading=h.giqv0ak8ze91</link>
+      <description>A collaborative resource about verification processes and community participation.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1pCB7-yLZ864RApEoy3cw7kSASHnj06gfCxH3tCzNBas/edit?tab=t.0#heading=h.giqv0ak8ze91</guid>
+    </item>
+    <item>
+      <title>Notes on Verification Strategy</title>
+      <link>https://docs.google.com/document/d/1h8ESnMD9E5iWKczzaw_rmjLXS9k1fj3I-sbJ8x-EkbY/edit?tab=t.6g91mcrfmyye#heading=h.rpgiym1lv4yi</link>
+      <description>Working notes and ideas on AI verification strategy development.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1h8ESnMD9E5iWKczzaw_rmjLXS9k1fj3I-sbJ8x-EkbY/edit?tab=t.6g91mcrfmyye#heading=h.rpgiym1lv4yi</guid>
+    </item>
+    <item>
+      <title>Verification Proposals</title>
+      <link>https://docs.google.com/document/d/1vP-K2IMh-FaRMEMztJWdXvBwkuJ4V9J6_NcKlFLPoVk/edit?tab=t.0#heading=h.79r98nognoia</link>
+      <description>Methods and frameworks for verification processes.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1vP-K2IMh-FaRMEMztJWdXvBwkuJ4V9J6_NcKlFLPoVk/edit?tab=t.0#heading=h.79r98nognoia</guid>
+    </item>
+    <item>
+      <title>Transparent accelerator workloads via sanitized re-execution</title>
+      <link>https://www.notion.so/Transparent-accelerator-workloads-via-sanitized-re-execution-26d60f987af080289120ef769f068264</link>
+      <description>Technical method for verifying accelerator computations through sanitized replay mechanisms.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://www.notion.so/Transparent-accelerator-workloads-via-sanitized-re-execution-26d60f987af080289120ef769f068264</guid>
+    </item>
+    <item>
+      <title>Verification MVP overview and updates - 10-23-25</title>
+      <link>https://docs.google.com/document/d/1D6pZe8hw1bhWPi_taEpHzLVgNAcbwtUusQ6qttXJE7s/edit?tab=t.emeoo4hgmrke</link>
+      <description>A minimum viable product design for AI treaty verification with an update on the state of affairs.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1D6pZe8hw1bhWPi_taEpHzLVgNAcbwtUusQ6qttXJE7s/edit?tab=t.emeoo4hgmrke</guid>
+    </item>
+    <item>
+      <title>Questions in AI verification</title>
+      <link>https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;viewControls=on</link>
+      <description>Structured database tracking open questions in AI verification and associated work.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://airtable.com/app5UBuLhJsGgtTxn/shrXUHlw6s46INo9U/tblvOIe8MfKpKhYGw/viwGjGG5fL4qmUkSn/recNpmXsTcjMOcCJU?layout=card&amp;viewControls=on</guid>
+    </item>
+    <item>
+      <title>Memo: AI appliances for controlled deployment</title>
+      <link>https://docs.google.com/document/d/1kDy21i4h9FteAslAVvCQ4EPBOrS3F4XYR64s4s8bzW4/edit?tab=t.0</link>
+      <description>Policy memo on deploying AI systems in controlled, verifiable hardware environments.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1kDy21i4h9FteAslAVvCQ4EPBOrS3F4XYR64s4s8bzW4/edit?tab=t.0</guid>
+    </item>
+    <item>
+      <title>Near-term Verification Workshop</title>
+      <link>https://docs.google.com/document/d/1GZJG8CVVFFYFZnojKvXSXRVPlr-wpkwOYOOBxrBFu6c/edit?tab=t.9ecu1qsb6pau</link>
+      <description>Workshop materials and discussion on near-term AI verification approaches.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1GZJG8CVVFFYFZnojKvXSXRVPlr-wpkwOYOOBxrBFu6c/edit?tab=t.9ecu1qsb6pau</guid>
+    </item>
+    <item>
+      <title>Verifiable Compute Accounting on Untrusted Hardware using Proof of Memory</title>
+      <link>https://www.notion.so/Verifiable-Compute-Accounting-on-Untrusted-Hardware-using-Proof-of-Memory-20d60f987af0803ea469efb696eb0540</link>
+      <description>Technical proposal for tracking and verifying compute usage on untrusted hardware using memory proofs.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://www.notion.so/Verifiable-Compute-Accounting-on-Untrusted-Hardware-using-Proof-of-Memory-20d60f987af0803ea469efb696eb0540</guid>
+    </item>
+    <item>
+      <title>Towards neutral, safe, mutually-trusted compute</title>
+      <link>https://docs.google.com/document/d/1VVduH4li7dVQgWmyutsH1IDeqyxE3xsW5xEvNwZWnTM/edit?tab=t.0</link>
+      <description>Vision document for creating trustworthy, neutral shared computing infrastructure for AI.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1VVduH4li7dVQgWmyutsH1IDeqyxE3xsW5xEvNwZWnTM/edit?tab=t.0</guid>
+    </item>
+    <item>
+      <title>Prospects for CC based AI Verification in International Contexts</title>
+      <link>https://docs.google.com/document/d/1LKs31yGgOxkGv_wfPtEuf_Kb0v8EoBq3Ka1ZebdG7mk/edit?usp=sharing</link>
+      <description>Analysis of confidential computing approaches for AI verification across international jurisdictions.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/1LKs31yGgOxkGv_wfPtEuf_Kb0v8EoBq3Ka1ZebdG7mk/edit?usp=sharing</guid>
+    </item>
+    <item>
+      <title>Near Term Verification Thoughts</title>
+      <link>https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0</link>
+      <description>Halfdan&apos;s one-pager explaining their excitement about near-term verification for AI governance and a framework for thinking about it.</description>
+      <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
+      <guid isPermaLink="true">https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0</guid>
+    </item>
+  </channel>
+</rss>

@@ -151,11 +151,13 @@
     });
   }
 
-  // Sort documents (newest first by default)
+  // Sort documents by order field (docs without order go first, then by order)
   function sortDocuments(docs) {
-    const sorted = [...docs];
-    sorted.reverse(); // Newest first
-    return sorted;
+    return [...docs].sort((a, b) => {
+      const orderA = a.order ?? -Infinity;
+      const orderB = b.order ?? -Infinity;
+      return orderA - orderB;
+    });
   }
 
   // Format platform name for display

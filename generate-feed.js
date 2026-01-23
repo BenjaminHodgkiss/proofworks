@@ -7,7 +7,7 @@ const NEW_DOCS_PATH = path.join(__dirname, 'new-documents.json');
 
 const FEED_TITLE = 'AI Verification Documents';
 const FEED_DESCRIPTION = 'A shared collection of resources for AI verification researchers';
-const FEED_LINK = 'https://example.com'; // Update this to your actual site URL
+const FEED_LINK = 'https://proofworks.cc';
 
 function escapeXml(str) {
   if (!str) return '';
