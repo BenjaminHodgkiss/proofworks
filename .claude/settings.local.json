@@ -38,7 +38,8 @@
       "Bash(supabase link:*)",
       "WebFetch(domain:nateross.dev)",
       "Bash(node -c:*)",
-      "Bash(printf:*)"
+      "Bash(printf:*)",
+      "Bash(pkill:*)"
     ]
   }
 }

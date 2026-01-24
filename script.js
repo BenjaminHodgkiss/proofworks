@@ -15,7 +15,8 @@
   // Fetch and initialize
   async function init() {
     try {
-      const response = await fetch('documents.json');
+      const documentsPath = window.DOCUMENTS_PATH || 'documents.json';
+      const response = await fetch(documentsPath);
       documents = await response.json();
       renderTags();
       renderFilterOptions();

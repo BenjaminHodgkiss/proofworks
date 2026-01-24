@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Living Verification Documents</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="alternate" type="application/rss+xml" title="Living Verification Documents Feed" href="../feed.xml">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title-container">
+        <img src="../Camera enclosure 8-bit.png" alt="Camera enclosure" class="header-image left">
+        <h1>Living Verification Documents</h1>
+        <img src="../Server rack 8-bit.png" alt="Server rack" class="header-image right">
+      </div>
+      <p class="subtitle">A close-to-comprehensive collection of shared documents for the community</p>
+      <button class="subscribe-btn" id="subscribe-btn">Subscribe for updates</button>
+    </header>
+
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <h2>Subscribe for updates</h2>
+        <p>Get notified when new documents are added to this collection.</p>
+        <form id="subscribe-form" data-supabase-url="https://jsbmozalhtxnekufeals.supabase.co">
+          <div class="frequency-options">
+            <span class="frequency-label">Email me:</span>
+            <label><input type="radio" name="frequency" value="immediate" checked> Immediately</label>
+            <label><input type="radio" name="frequency" value="daily"> Daily</label>
+            <label><input type="radio" name="frequency" value="weekly"> Weekly (Mondays)</label>
+          </div>
+          <div class="email-submit-row">
+            <input type="email" name="email" placeholder="your@email.com" required>
+            <button type="submit">Subscribe</button>
+          </div>
+        </form>
+        <p class="modal-note">You can manage your preferences anytime using the link in our emails.</p>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search by title, description, author, or tags..."
+        autocomplete="off"
+      >
+    </div>
+
+    <div class="filters-section">
+      <span class="filter-label">Filter by</span>
+      <div class="filter-group">
+        <label for="author-filter">Author</label>
+        <select id="author-filter">
+          <option value="" disabled selected>Author</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="platform-filter">Type</label>
+        <select id="platform-filter">
+          <option value="" disabled selected>Type</option>
+        </select>
+      </div>
+      <button class="clear-filters-btn hidden" id="clear-filters-btn">Clear all</button>
+    </div>
+
+    <div class="tags-section">
+      <span class="tags-label">Tags</span>
+      <div class="tags-container" id="tags-container">
+        <!-- Tags will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <main>
+      <div class="table-header">
+        <span class="col-title">Title</span>
+        <span class="col-author">Author</span>
+        <span class="col-description">Description</span>
+        <span class="col-tags">Tags</span>
+      </div>
+      <div class="documents-list" id="documents-list">
+        <!-- Documents will be populated by JavaScript -->
+      </div>
+      <p class="no-results" id="no-results">No documents found matching your search.</p>
+    </main>
+
+    <footer>
+      <p><a href="../feed.xml" class="rss-link">RSS Feed</a></p>
+    </footer>
+  </div>
+
+  <script src="../script.js"></script>
+  <script>
+    // Update the documents.json path for this subdirectory
+    window.DOCUMENTS_PATH = '../documents.json';
+  </script>
+</body>
+</html>
