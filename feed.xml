@@ -146,33 +146,5 @@
       <pubDate>Fri, 23 Jan 2026 14:50:22 GMT</pubDate>
       <guid isPermaLink="true">https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0</guid>
     </item>
-    <item>
-      <title>Test 2</title>
-      <link>bbc.co.uk</link>
-      <description>BBC BABY</description>
-      <pubDate>Fri, 23 Jan 2026 15:03:15 GMT</pubDate>
-      <guid isPermaLink="true">bbc.co.uk</guid>
-    </item>
-    <item>
-      <title>Test 3</title>
-      <link>bbc.co.uk/news</link>
-      <description>BBC BABY</description>
-      <pubDate>Fri, 23 Jan 2026 15:21:39 GMT</pubDate>
-      <guid isPermaLink="true">bbc.co.uk/news</guid>
-    </item>
-    <item>
-      <title>Test 4</title>
-      <link>bbc.co.uk/sport</link>
-      <description>BBC BABY</description>
-      <pubDate>Fri, 23 Jan 2026 19:48:49 GMT</pubDate>
-      <guid isPermaLink="true">bbc.co.uk/sport</guid>
-    </item>
-    <item>
-      <title>Test 5</title>
-      <link>google.com</link>
-      <description>now way</description>
-      <pubDate>Fri, 23 Jan 2026 19:50:11 GMT</pubDate>
-      <guid isPermaLink="true">google.com</guid>
-    </item>
   </channel>
 </rss>
