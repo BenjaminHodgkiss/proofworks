@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Dark circles for light browser theme -->
+  <circle cx="50" cy="29" r="15" fill="#333"/>
+  <circle cx="28.8" cy="65.7" r="15" fill="#333"/>
+  <circle cx="71.2" cy="65.7" r="15" fill="#333"/>
+</svg>
