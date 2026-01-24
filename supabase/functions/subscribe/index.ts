@@ -1,9 +1,26 @@
 import { sendEmail } from '../_shared/send-email.ts'
 import { verificationEmail } from '../_shared/email-templates.ts'
-import { VERIFICATION_EXPIRY_HOURS, VALID_FREQUENCIES } from '../_shared/config.ts'
+import { VALID_FREQUENCIES } from '../_shared/config.ts'
 import { handleCors } from '../_shared/cors.ts'
-import { jsonResponse, errorResponse, successResponse } from '../_shared/responses.ts'
+import { errorResponse, successResponse } from '../_shared/responses.ts'
 import { getSupabaseClient, getSupabaseUrl } from '../_shared/supabase.ts'
+import { updateExistingSubscriberForVerification, createNewSubscriber } from '../_shared/subscriber-operations.ts'
+
+async function sendVerificationAndRespond(email: string, verificationToken: string, supabaseUrl: string) {
+  const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
+  const emailResult = await sendEmail({
+    to: email,
+    subject: 'Verify your subscription to Living Verification Documents',
+    html: verificationEmail(verifyUrl)
+  })
+
+  if (!emailResult.success) {
+    console.error('Failed to send verification email:', emailResult.error)
+    return errorResponse('Failed to send verification email. Please try again.', 500)
+  }
+
+  return successResponse('Check your email to verify your subscription.', { requiresVerification: true })
+}
 
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req)
@@ -41,6 +58,7 @@ Deno.serve(async (req) => {
       .single()
 
     if (existing) {
+      // Already verified - just update frequency if different
       if (existing.is_active && existing.email_verified) {
         if (existing.email_frequency === frequency) {
           return successResponse('You are already subscribed with this frequency.', { requiresVerification: false })
@@ -59,77 +77,30 @@ Deno.serve(async (req) => {
         return successResponse('Preferences updated!', { requiresVerification: false })
       }
 
-      const verificationToken = crypto.randomUUID()
-      const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
-      const preferencesToken = existing.preferences_token || crypto.randomUUID()
-
-      const { error } = await supabase
-        .from('subscribers')
-        .update({
-          email_frequency: frequency,
-          verification_token: verificationToken,
-          verification_token_expires_at: expiresAt,
-          preferences_token: preferencesToken,
-          unsubscribe_token: existing.unsubscribe_token || crypto.randomUUID()
-        })
-        .eq('id', existing.id)
+      // Not verified - resend verification email
+      const { error, verificationToken } = await updateExistingSubscriberForVerification(
+        supabase,
+        existing,
+        frequency
+      )
 
       if (error) {
         console.error('Database error:', error)
         return errorResponse('Failed to subscribe', 500)
       }
 
-      const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
-      const emailResult = await sendEmail({
-        to: normalizedEmail,
-        subject: 'Verify your subscription to Living Verification Documents',
-        html: verificationEmail(verifyUrl)
-      })
-
-      if (!emailResult.success) {
-        console.error('Failed to send verification email:', emailResult.error)
-        return errorResponse('Failed to send verification email. Please try again.', 500)
-      }
-
-      return successResponse('Check your email to verify your subscription.', { requiresVerification: true })
+      return await sendVerificationAndRespond(normalizedEmail, verificationToken, supabaseUrl)
     }
 
-    const verificationToken = crypto.randomUUID()
-    const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
-    const preferencesToken = crypto.randomUUID()
-    const unsubscribeToken = crypto.randomUUID()
-
-    const { error } = await supabase
-      .from('subscribers')
-      .insert({
-        email: normalizedEmail,
-        is_active: false,
-        email_frequency: frequency,
-        email_verified: false,
-        verification_token: verificationToken,
-        verification_token_expires_at: expiresAt,
-        preferences_token: preferencesToken,
-        unsubscribe_token: unsubscribeToken
-      })
+    // New subscriber
+    const { error, verificationToken } = await createNewSubscriber(supabase, normalizedEmail, frequency)
 
     if (error) {
       console.error('Database error:', error)
       return errorResponse('Failed to subscribe', 500)
     }
 
-    const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
-    const emailResult = await sendEmail({
-      to: normalizedEmail,
-      subject: 'Verify your subscription to Living Verification Documents',
-      html: verificationEmail(verifyUrl)
-    })
-
-    if (!emailResult.success) {
-      console.error('Failed to send verification email:', emailResult.error)
-      return errorResponse('Failed to send verification email. Please try again.', 500)
-    }
-
-    return successResponse('Check your email to verify your subscription.', { requiresVerification: true })
+    return await sendVerificationAndRespond(normalizedEmail, verificationToken, supabaseUrl)
   } catch (error) {
     console.error('Error:', error)
     return errorResponse('Internal server error', 500)

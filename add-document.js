@@ -28,6 +28,14 @@ async function promptRequired(prompt, fieldName) {
   return value.trim();
 }
 
+async function editField(doc, fieldName, displayName, formatter = (v) => v) {
+  const currentValue = formatter(doc[fieldName]);
+  const newValue = await question(`${displayName} [${currentValue}]: `);
+  if (newValue.trim()) {
+    doc[fieldName] = newValue.trim();
+  }
+}
+
 function loadDocuments() {
   try {
     return loadDocumentsBase(false);
@@ -153,21 +161,11 @@ async function editDocument() {
   const doc = documents[docIndex];
   console.log('\nCurrent values (press Enter to keep current value):\n');
 
-  const title = await question(`Title [${doc.title}]: `);
-  if (title.trim()) doc.title = title.trim();
-
-  const url = await question(`URL [${doc.url}]: `);
-  if (url.trim()) doc.url = url.trim();
-
-  const platform = await question(`Platform [${doc.platform}]: `);
-  if (platform.trim()) doc.platform = platform.trim();
-
-  const currentAuthor = formatAuthor(doc.author);
-  const author = await question(`Author [${currentAuthor}]: `);
-  if (author.trim()) doc.author = author.trim();
-
-  const description = await question(`Description [${doc.description}]: `);
-  if (description.trim()) doc.description = description.trim();
+  await editField(doc, 'title', 'Title');
+  await editField(doc, 'url', 'URL');
+  await editField(doc, 'platform', 'Platform');
+  await editField(doc, 'author', 'Author', formatAuthor);
+  await editField(doc, 'description', 'Description');
 
   const currentTags = doc.tags.join(', ');
   const tagsInput = await question(`Tags [${currentTags}]: `);
