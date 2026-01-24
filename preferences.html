@@ -275,6 +275,10 @@
           <button id="unsubscribe-btn" class="btn btn-danger">Unsubscribe</button>
         </div>
 
+        <div id="unsubscribed-state" class="unsubscribed-state" style="display: none;">
+          <p>You are currently unsubscribed from email updates.</p>
+          <button id="resubscribe-btn" class="btn btn-primary">Resubscribe</button>
+        </div>
       </div>
     </div>
 
@@ -292,6 +296,7 @@
     const messageEl = document.getElementById('message');
     const saveBtnEl = document.getElementById('save-btn');
     const unsubscribeBtnEl = document.getElementById('unsubscribe-btn');
+    const resubscribeBtnEl = document.getElementById('resubscribe-btn');
     const frequencyOptionsEl = document.getElementById('frequency-options');
 
     let currentFrequency = null;
@@ -441,6 +446,40 @@
       }
     });
 
+    // Resubscribe button handler
+    resubscribeBtnEl.addEventListener('click', async () => {
+      resubscribeBtnEl.disabled = true;
+      resubscribeBtnEl.textContent = 'Resubscribing...';
+      hideMessage();
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/preferences?token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'resubscribe' })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          unsubscribedStateEl.style.display = 'none';
+          activeStateEl.style.display = 'block';
+          selectFrequency(currentFrequency);
+          showMessage('You have been resubscribed! Check your email for confirmation.', 'success');
+          unsubscribeBtnEl.disabled = false;
+          unsubscribeBtnEl.textContent = 'Unsubscribe';
+        } else {
+          showMessage(data.error || 'Failed to resubscribe.', 'error');
+          resubscribeBtnEl.disabled = false;
+          resubscribeBtnEl.textContent = 'Resubscribe';
+        }
+      } catch (err) {
+        console.error('Error resubscribing:', err);
+        showMessage('Something went wrong. Please try again.', 'error');
+        resubscribeBtnEl.disabled = false;
+        resubscribeBtnEl.textContent = 'Resubscribe';
+      }
+    });
   </script>
 </body>
 </html>
