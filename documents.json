@@ -37,7 +37,7 @@
       "research-agenda",
       "hardware"
     ],
-    "order": 40
+    "order": 260
   },
   {
     "title": "An approach to AI verification strategy",
@@ -48,7 +48,7 @@
     "tags": [
       "strategy"
     ],
-    "order": 50
+    "order": 250
   },
   {
     "title": "AI Verification Estimated Timelines and Backcasting",
@@ -59,7 +59,7 @@
     "tags": [
       "strategy"
     ],
-    "order": 60
+    "order": 240
   },
   {
     "title": "Breaking Location Verification through IR-LVP",
@@ -119,7 +119,7 @@
     "tags": [
       "strategy"
     ],
-    "order": 110
+    "order": 230
   },
   {
     "title": "Verification Proposals",
@@ -130,7 +130,7 @@
     "tags": [
       "policy-proposal"
     ],
-    "order": 120
+    "order": 220
   },
   {
     "title": "Transparent accelerator workloads via sanitized re-execution",
@@ -146,7 +146,7 @@
       "software",
       "technical-paper"
     ],
-    "order": 130
+    "order": 210
   },
   {
     "title": "Verification MVP overview and updates - 10-23-25",
@@ -164,7 +164,7 @@
       "strategy",
       "research-agenda"
     ],
-    "order": 140
+    "order": 200
   },
   {
     "title": "Questions in AI verification",
@@ -234,24 +234,24 @@
     "title": "Prospects for CC based AI Verification in International Contexts",
     "url": "https://docs.google.com/document/d/1LKs31yGgOxkGv_wfPtEuf_Kb0v8EoBq3Ka1ZebdG7mk/edit?usp=sharing",
     "platform": "google-docs",
-    "author": "",
+    "author": "Yannick Mühlhäuser",
     "description": "Analysis of confidential computing approaches for AI verification across international jurisdictions.",
     "tags": [
       "policy-proposal"
     ],
-    "order": 200
+    "order": 132
   },
   {
     "title": "Near Term Verification Thoughts",
     "url": "https://docs.google.com/document/d/10gjIhtnBj5y7n6jpRrL1BQ47Y5sj2EElVQa3LzAFK3E/edit?tab=t.0",
     "platform": "google-docs",
     "author": "Halfdan Holm",
-    "description": "Halfdan's one-pager explaining their excitement about near-term verification for AI governance and a framework for thinking about it.",
+    "description": "One-pager on near-term verification for AI governance and a framework for thinking about it.",
     "tags": [
       "research-agenda",
       "hardware",
       "software"
     ],
-    "order": 210
+    "order": 131
   }
 ]
