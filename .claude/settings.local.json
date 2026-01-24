@@ -42,7 +42,11 @@
       "Bash(pkill:*)",
       "Bash(lsof:*)",
       "Bash(kill:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(sips:*)",
+      "Bash(identify:*)",
+      "Bash(convert:*)",
+      "Bash(pip3 install:*)"
     ]
   }
 }

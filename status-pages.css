@@ -1,4 +1,19 @@
 /* Shared styles for status pages (verified, error, unsubscribed, etc.) */
+:root {
+  --bg-primary: #faf9f7;
+  --text-primary: #2d3748;
+  --text-secondary: #64748b;
+  --accent: #5b8a8a;
+  --accent-hover: #4a7373;
+  --radius: 8px;
+
+  /* Spacing scale */
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   display: flex;
@@ -6,19 +21,19 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  background-color: #faf9f7;
-  color: #333;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .container {
   text-align: center;
-  padding: 40px;
+  padding: var(--space-xl);
   max-width: 400px;
 }
 
 h1 {
-  color: #5b8a8a;
-  margin-bottom: 16px;
+  color: var(--accent);
+  margin-bottom: var(--space-md);
 }
 
 h1.error {
@@ -30,12 +45,12 @@ h1.warning {
 }
 
 p {
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
 a {
-  color: #5b8a8a;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -45,15 +60,15 @@ a:hover {
 
 .btn {
   display: inline-block;
-  padding: 12px 24px;
-  background-color: #5b8a8a;
+  padding: 0.75rem var(--space-lg);
+  background-color: var(--accent);
   color: white;
   text-decoration: none;
-  border-radius: 4px;
-  margin-top: 16px;
+  border-radius: var(--radius);
+  margin-top: var(--space-md);
 }
 
 .btn:hover {
-  background-color: #4a7979;
+  background-color: var(--accent-hover);
   text-decoration: none;
 }
