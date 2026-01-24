@@ -287,7 +287,7 @@
 
         <div id="unsubscribed-state" class="unsubscribed-state" style="display: none;">
           <p>You are currently unsubscribed from email updates.</p>
-          <a href="https://proofworks.cc" class="btn btn-primary" style="display: inline-block; text-decoration: none;">Resubscribe</a>
+          <button id="resubscribe-btn" class="btn btn-primary">Resubscribe</button>
         </div>
       </div>
     </div>
@@ -307,6 +307,7 @@
     const messageEl = document.getElementById('message');
     const saveBtnEl = document.getElementById('save-btn');
     const unsubscribeBtnEl = document.getElementById('unsubscribe-btn');
+    const resubscribeBtnEl = document.getElementById('resubscribe-btn');
     const frequencyOptionsEl = document.getElementById('frequency-options');
 
     let currentFrequency = null;
@@ -426,10 +427,6 @@
 
     // Unsubscribe button handler
     unsubscribeBtnEl.addEventListener('click', async () => {
-      if (!confirm('Are you sure you want to unsubscribe from all email updates?')) {
-        return;
-      }
-
       unsubscribeBtnEl.disabled = true;
       unsubscribeBtnEl.textContent = 'Unsubscribing...';
       hideMessage();
@@ -457,6 +454,41 @@
         showMessage('Something went wrong. Please try again.', 'error');
         unsubscribeBtnEl.disabled = false;
         unsubscribeBtnEl.textContent = 'Unsubscribe';
+      }
+    });
+
+    // Resubscribe button handler
+    resubscribeBtnEl.addEventListener('click', async () => {
+      resubscribeBtnEl.disabled = true;
+      resubscribeBtnEl.textContent = 'Resubscribing...';
+      hideMessage();
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/preferences?token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'resubscribe' })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          unsubscribedStateEl.style.display = 'none';
+          activeStateEl.style.display = 'block';
+          selectFrequency(currentFrequency);
+          showMessage('You have been resubscribed! Check your email for confirmation.', 'success');
+          unsubscribeBtnEl.disabled = false;
+          unsubscribeBtnEl.textContent = 'Unsubscribe';
+        } else {
+          showMessage(data.error || 'Failed to resubscribe.', 'error');
+          resubscribeBtnEl.disabled = false;
+          resubscribeBtnEl.textContent = 'Resubscribe';
+        }
+      } catch (err) {
+        console.error('Error resubscribing:', err);
+        showMessage('Something went wrong. Please try again.', 'error');
+        resubscribeBtnEl.disabled = false;
+        resubscribeBtnEl.textContent = 'Resubscribe';
       }
     });
   </script>
