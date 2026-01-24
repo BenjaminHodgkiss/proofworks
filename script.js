@@ -223,6 +223,9 @@
   }
 
   // Format author for display
+  // Note: This formatAuthor duplicates lib/utils.js intentionally.
+  // The frontend runs in browser without Node.js, so cannot import lib/.
+  // Keep implementations in sync if behavior changes.
   function formatAuthor(author) {
     if (!author) return '';
     if (Array.isArray(author)) {
