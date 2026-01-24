@@ -4,8 +4,15 @@
     <title>AI Verification Documents</title>
     <link>https://proofworks.cc</link>
     <description>A shared collection of resources for AI verification researchers</description>
-    <lastBuildDate>Sat, 24 Jan 2026 03:13:30 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 24 Jan 2026 03:33:25 GMT</lastBuildDate>
     <atom:link href="https://proofworks.cc/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Test 222</title>
+      <link>222.com</link>
+      <description>you</description>
+      <pubDate>Sat, 24 Jan 2026 03:33:25 GMT</pubDate>
+      <guid isPermaLink="true">222.com</guid>
+    </item>
     <item>
       <title>Test 111</title>
       <link>111.com</link>
