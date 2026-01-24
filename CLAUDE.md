@@ -28,6 +28,11 @@ Simple tasks that don't require a reminder:
 
 ## Commands
 
+### Local Development
+```bash
+npm run dev                   # Start local server at http://localhost:3000
+```
+
 ### Document Management
 ```bash
 node add-document.js add      # Add new document (interactive)

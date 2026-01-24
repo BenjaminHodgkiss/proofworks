@@ -1,0 +1,9 @@
+{
+  "name": "proofworks",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve -l 3000",
+    "add": "node add-document.js add",
+    "feed": "node generate-feed.js"
+  }
+}
