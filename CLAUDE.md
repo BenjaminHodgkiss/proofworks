@@ -109,3 +109,11 @@ RESEND_API_KEY
 - Site URL is `https://proofworks.cc`
 - Frontend is vanilla HTML/CSS/JS with no build step
 - Edge functions use Deno runtime with esm.sh imports
+
+## Code Changes
+
+Keep changes minimal and focused. Only modify what's directly requested—don't add unrequested features, refactor surrounding code, or add "just in case" error handling. Trust internal code; only validate at system boundaries. Prefer three similar lines over a premature abstraction.
+
+## Task Persistence
+
+Do not stop tasks early due to context window concerns - the context is automatically compacted to allow continued work. Complete tasks fully rather than artificially truncating work. If a task is genuinely too large for a single session, break it into discrete, committable chunks rather than leaving work in an incomplete state.
