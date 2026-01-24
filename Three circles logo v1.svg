@@ -7,11 +7,11 @@
   -->
   
   <!-- Top circle -->
-  <circle cx="50" cy="29" r="15" fill="black"/>
-  
+  <circle cx="50" cy="29" r="15" fill="#2d3748"/>
+
   <!-- Bottom left circle -->
-  <circle cx="28.8" cy="65.7" r="15" fill="black"/>
-  
+  <circle cx="28.8" cy="65.7" r="15" fill="#2d3748"/>
+
   <!-- Bottom right circle -->
-  <circle cx="71.2" cy="65.7" r="15" fill="black"/>
+  <circle cx="71.2" cy="65.7" r="15" fill="#2d3748"/>
 </svg>
