@@ -7,62 +7,6 @@
     <lastBuildDate>Fri, 23 Jan 2026 22:58:36 GMT</lastBuildDate>
     <atom:link href="https://proofworks.cc/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <title>Test 12</title>
-      <link>12.com</link>
-      <description>Hi</description>
-      <pubDate>Fri, 23 Jan 2026 22:58:36 GMT</pubDate>
-      <guid isPermaLink="true">12.com</guid>
-    </item>
-    <item>
-      <title>Test 11</title>
-      <link>11.com</link>
-      <description>Oh yeah</description>
-      <pubDate>Fri, 23 Jan 2026 22:52:29 GMT</pubDate>
-      <guid isPermaLink="true">11.com</guid>
-    </item>
-    <item>
-      <title>Test 10</title>
-      <link>test10.com</link>
-      <description>A test</description>
-      <pubDate>Fri, 23 Jan 2026 21:26:01 GMT</pubDate>
-      <guid isPermaLink="true">test10.com</guid>
-    </item>
-    <item>
-      <title>Sync Fix Test Document</title>
-      <link>https://example.com/sync-fix-test</link>
-      <description>Testing that feed.xml sync fix works</description>
-      <pubDate>Fri, 23 Jan 2026 21:16:31 GMT</pubDate>
-      <guid isPermaLink="true">https://example.com/sync-fix-test</guid>
-    </item>
-    <item>
-      <title>Test 9</title>
-      <link>9.com</link>
-      <description>Okay</description>
-      <pubDate>Fri, 23 Jan 2026 20:54:49 GMT</pubDate>
-      <guid isPermaLink="true">9.com</guid>
-    </item>
-    <item>
-      <title>Test 8</title>
-      <link>8.com</link>
-      <description>nope</description>
-      <pubDate>Fri, 23 Jan 2026 20:31:38 GMT</pubDate>
-      <guid isPermaLink="true">8.com</guid>
-    </item>
-    <item>
-      <title>Test 7</title>
-      <link>7.com</link>
-      <description>oh yearh</description>
-      <pubDate>Fri, 23 Jan 2026 20:26:25 GMT</pubDate>
-      <guid isPermaLink="true">7.com</guid>
-    </item>
-    <item>
-      <title>Test 6</title>
-      <link>no.com</link>
-      <description>nope</description>
-      <pubDate>Fri, 23 Jan 2026 20:14:26 GMT</pubDate>
-      <guid isPermaLink="true">no.com</guid>
-    </item>
-    <item>
       <title>Compute transparency via verifiable memory exhaustion</title>
       <link>https://www.notion.so/Compute-transparency-via-verifiable-memory-exhaustion-27f60f987af080219c08f36894cf4e31</link>
       <description>Technical approach to verifying AI compute usage through memory exhaustion signatures.</description>
