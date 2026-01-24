@@ -128,7 +128,9 @@
     "author": "Romeo Dean",
     "description": "Methods and frameworks for verification processes.",
     "tags": [
-      "policy-proposal"
+      "hardware",
+      "software",
+      "technical-paper"
     ],
     "order": 220
   },
