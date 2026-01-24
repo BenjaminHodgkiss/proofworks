@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
       const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
       const emailResult = await sendEmail({
         to: normalizedEmail,
-        subject: 'Verify your subscription to AI Verification Documents',
+        subject: 'Verify your subscription to Living Verification Documents',
         html: verificationEmail(verifyUrl)
       })
 
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
     const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
     const emailResult = await sendEmail({
       to: normalizedEmail,
-      subject: 'Verify your subscription to AI Verification Documents',
+      subject: 'Verify your subscription to Living Verification Documents',
       html: verificationEmail(verifyUrl)
     })
 

@@ -45,7 +45,7 @@ async function main() {
 
   const subject = newDocuments.length === 1
     ? `New Document: ${newDocuments[0].title}`
-    : `${newDocuments.length} New AI Verification Documents`;
+    : `${newDocuments.length} New Living Verification Documents`;
 
   const baseHtml = generateEmailHtml(newDocuments);
 
@@ -89,7 +89,7 @@ function generateEmailHtml(documents) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-  <h1 style="color: #5b8a8a; font-size: 24px; margin-bottom: 24px;">New AI Verification Documents</h1>
+  <h1 style="color: #5b8a8a; font-size: 24px; margin-bottom: 24px;">New Living Verification Documents</h1>
 
   ${documentsList}
 
@@ -100,7 +100,7 @@ function generateEmailHtml(documents) {
   <hr style="margin: 32px 0; border: none; border-top: 1px solid #eee;">
 
   <p style="font-size: 12px; color: #999; margin-bottom: 16px;">
-    You're receiving this because you subscribed to AI Verification Document updates.
+    You're receiving this because you subscribed to Living Verification Documents updates.
     <a href="{{PREFERENCES_URL}}" style="color: #999;">Manage preferences</a>
   </p>
 

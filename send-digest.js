@@ -75,7 +75,7 @@ async function main() {
   const periodLabel = frequency === 'daily' ? 'Daily' : 'Weekly';
   const subject = newDocuments.length === 1
     ? `${periodLabel} Digest: ${newDocuments[0].title}`
-    : `${periodLabel} Digest: ${newDocuments.length} New AI Verification Documents`;
+    : `${periodLabel} Digest: ${newDocuments.length} New Living Verification Documents`;
 
   const baseHtml = generateDigestEmailHtml(newDocuments, frequency);
 
@@ -136,7 +136,7 @@ function generateDigestEmailHtml(documents, frequency) {
   <hr style="margin: 32px 0; border: none; border-top: 1px solid #eee;">
 
   <p style="font-size: 12px; color: #999; margin-bottom: 16px;">
-    You're receiving this ${frequency} digest because you subscribed to AI Verification Document updates.
+    You're receiving this ${frequency} digest because you subscribed to Living Verification Documents updates.
     <a href="{{PREFERENCES_URL}}" style="color: #999;">Manage preferences</a>
   </p>
 

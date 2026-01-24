@@ -1,6 +1,6 @@
 // Resend API wrapper for sending transactional emails
 
-const FROM_ADDRESS = 'AI Verification Docs <updates@proofworks.cc>'
+const FROM_ADDRESS = 'Living Verification Documents <updates@proofworks.cc>'
 
 interface SendEmailOptions {
   to: string

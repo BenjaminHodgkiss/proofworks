@@ -42,7 +42,7 @@ function unsubscribeFooter(unsubscribeUrl: string): string {
 export function verificationEmail(verifyUrl: string): string {
   const content = `
     <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-      Thanks for subscribing to AI Verification Document updates.
+      Thanks for subscribing to Living Verification Documents updates.
     </p>
     <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
       Please verify your email address by clicking the button below:
@@ -54,7 +54,7 @@ export function verificationEmail(verifyUrl: string): string {
   `
   const footer = `
     <p style="font-size: 14px; color: #999; line-height: 1.6; margin: 0;">
-      You received this email because someone subscribed with this address at <a href="${SITE_URL}" style="color: #999;">AI Verification Documents</a>.
+      You received this email because someone subscribed with this address at <a href="${SITE_URL}" style="color: #999;">Living Verification Documents</a>.
     </p>
   `
   return baseTemplate('Verify Your Subscription', content, footer)
@@ -69,7 +69,7 @@ export function welcomeEmail(frequency: string, preferencesUrl: string, unsubscr
 
   const content = `
     <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-      Your subscription to AI Verification Documents is now active.
+      Your subscription to Living Verification Documents is now active.
     </p>
     <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
       You'll receive updates <strong>${frequencyText}</strong>.
@@ -80,13 +80,13 @@ export function welcomeEmail(frequency: string, preferencesUrl: string, unsubscr
     </p>
   `
   const footer = unsubscribeFooter(unsubscribeUrl)
-  return baseTemplate('Welcome to AI Verification Documents', content, footer)
+  return baseTemplate('Welcome to Living Verification Documents', content, footer)
 }
 
 export function unsubscribeConfirmationEmail(): string {
   const content = `
     <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
-      You have been unsubscribed from AI Verification Document updates.
+      You have been unsubscribed from Living Verification Documents updates.
     </p>
     <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
       You will no longer receive emails from us.

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AI Verification Document Database (Proofworks) - A static website with email subscription system for distributing curated AI verification documents. Uses Supabase for subscriber management, Resend for transactional emails, and GitHub Actions for automated notifications.
+Living Verification Documents (Proofworks) - A static website with email subscription system for distributing curated AI verification documents. Uses Supabase for subscriber management, Resend for transactional emails, and GitHub Actions for automated notifications.
 
 ## Commands
 

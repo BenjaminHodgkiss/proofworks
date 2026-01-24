@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
 
   const emailResult = await sendEmail({
     to: subscriber.email,
-    subject: 'Welcome to AI Verification Documents',
+    subject: 'Welcome to Living Verification Documents',
     html: welcomeHtml
   })
 
