@@ -39,7 +39,9 @@
       "WebFetch(domain:nateross.dev)",
       "Bash(node -c:*)",
       "Bash(printf:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)"
     ]
   }
 }
