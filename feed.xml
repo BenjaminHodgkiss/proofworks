@@ -7,34 +7,6 @@
     <lastBuildDate>Sat, 24 Jan 2026 03:36:51 GMT</lastBuildDate>
     <atom:link href="https://proofworks.cc/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <title>Test URL link from email</title>
-      <link>https://www.bbc.co.uk/news</link>
-      <description>you</description>
-      <pubDate>Sat, 24 Jan 2026 03:36:51 GMT</pubDate>
-      <guid isPermaLink="true">https://www.bbc.co.uk/news</guid>
-    </item>
-    <item>
-      <title>Test 222</title>
-      <link>222.com</link>
-      <description>you</description>
-      <pubDate>Sat, 24 Jan 2026 03:33:25 GMT</pubDate>
-      <guid isPermaLink="true">222.com</guid>
-    </item>
-    <item>
-      <title>Test 111</title>
-      <link>111.com</link>
-      <description>yes</description>
-      <pubDate>Sat, 24 Jan 2026 03:13:30 GMT</pubDate>
-      <guid isPermaLink="true">111.com</guid>
-    </item>
-    <item>
-      <title>Test 111</title>
-      <link>111.com</link>
-      <description>You</description>
-      <pubDate>Sat, 24 Jan 2026 03:13:30 GMT</pubDate>
-      <guid isPermaLink="true">111.com</guid>
-    </item>
-    <item>
       <title>Compute transparency via verifiable memory exhaustion</title>
       <link>https://www.notion.so/Compute-transparency-via-verifiable-memory-exhaustion-27f60f987af080219c08f36894cf4e31</link>
       <description>Technical approach to verifying AI compute usage through memory exhaustion signatures.</description>

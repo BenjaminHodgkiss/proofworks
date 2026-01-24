@@ -37,7 +37,8 @@
       "Bash(git push:*)",
       "Bash(supabase link:*)",
       "WebFetch(domain:nateross.dev)",
-      "Bash(node -c:*)"
+      "Bash(node -c:*)",
+      "Bash(printf:*)"
     ]
   }
 }
