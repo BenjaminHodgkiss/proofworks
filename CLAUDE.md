@@ -6,6 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Living Verification Documents (Proofworks) - A static website with email subscription system for distributing curated AI verification documents. Uses Supabase for subscriber management, Resend for transactional emails, and GitHub Actions for automated notifications.
 
+## Model Selection Guidance
+
+When the user requests a complex task, check the current model being used. If not using Opus 4.5 (claude-opus-4-5-20251101), remind the user that complex tasks may benefit from the more capable Opus 4.5 model.
+
+Complex tasks include:
+- Multi-file architectural changes or refactoring
+- New feature implementations affecting multiple systems
+- Complex debugging requiring deep analysis
+- Database schema changes or migrations
+- Significant changes to email templates, workflows, or edge functions
+- Performance optimization or security improvements
+- Major UI/UX redesigns
+
+Simple tasks that don't require a reminder:
+- Single-file edits or bug fixes
+- Adding/editing/deleting documents via existing scripts
+- Regenerating RSS feeds
+- Deployment of existing code
+- Reading or explaining code
+
 ## Commands
 
 ### Document Management
