@@ -1,10 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/send-email.ts'
-import {
-  verificationEmail,
-  welcomeBackEmail,
-  frequencyChangeEmail
-} from '../_shared/email-templates.ts'
+import { verificationEmail } from '../_shared/email-templates.ts'
 
 const SITE_URL = 'https://proofworks.cc'
 const VERIFICATION_EXPIRY_HOURS = 24
@@ -100,14 +96,6 @@ Deno.serve(async (req) => {
           )
         }
 
-        // Send frequency change confirmation
-        const preferencesUrl = `${SITE_URL}/preferences.html?token=${existing.preferences_token}`
-        await sendEmail({
-          to: normalizedEmail,
-          subject: 'Your subscription preferences have been updated',
-          html: frequencyChangeEmail(frequency, preferencesUrl)
-        })
-
         return new Response(
           JSON.stringify({
             success: true,
@@ -118,46 +106,7 @@ Deno.serve(async (req) => {
         )
       }
 
-      // Case 2: Previously unsubscribed but was verified - reactivate immediately
-      if (!existing.is_active && existing.email_verified) {
-        const preferencesToken = existing.preferences_token || crypto.randomUUID()
-
-        const { error } = await supabase
-          .from('subscribers')
-          .update({
-            is_active: true,
-            email_frequency: frequency,
-            preferences_token: preferencesToken
-          })
-          .eq('id', existing.id)
-
-        if (error) {
-          console.error('Database error:', error)
-          return new Response(
-            JSON.stringify({ error: 'Failed to resubscribe' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          )
-        }
-
-        // Send welcome back email
-        const preferencesUrl = `${SITE_URL}/preferences.html?token=${preferencesToken}`
-        await sendEmail({
-          to: normalizedEmail,
-          subject: 'Welcome back to AI Verification Documents',
-          html: welcomeBackEmail(frequency, preferencesUrl)
-        })
-
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: 'Welcome back! Your subscription is active.',
-            requiresVerification: false
-          }),
-          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      // Case 3: Never verified (or inactive and unverified) - send new verification email
+      // Case 2: Never verified - send new verification email
       const verificationToken = crypto.randomUUID()
       const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
       const preferencesToken = existing.preferences_token || crypto.randomUUID()
@@ -183,11 +132,19 @@ Deno.serve(async (req) => {
 
       // Send verification email
       const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
-      await sendEmail({
+      const emailResult = await sendEmail({
         to: normalizedEmail,
         subject: 'Verify your subscription to AI Verification Documents',
         html: verificationEmail(verifyUrl)
       })
+
+      if (!emailResult.success) {
+        console.error('Failed to send verification email:', emailResult.error)
+        return new Response(
+          JSON.stringify({ error: 'Failed to send verification email. Please try again.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
 
       return new Response(
         JSON.stringify({
@@ -228,11 +185,19 @@ Deno.serve(async (req) => {
 
     // Send verification email
     const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
-    await sendEmail({
+    const emailResult = await sendEmail({
       to: normalizedEmail,
       subject: 'Verify your subscription to AI Verification Documents',
       html: verificationEmail(verifyUrl)
     })
+
+    if (!emailResult.success) {
+      console.error('Failed to send verification email:', emailResult.error)
+      return new Response(
+        JSON.stringify({ error: 'Failed to send verification email. Please try again.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     return new Response(
       JSON.stringify({

@@ -34,7 +34,8 @@
       "Bash(supabase db push:*)",
       "Bash(supabase db execute:*)",
       "Bash(supabase status:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(supabase link:*)"
     ]
   }
 }

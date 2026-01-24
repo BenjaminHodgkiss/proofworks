@@ -216,16 +216,6 @@
       text-decoration: underline;
     }
 
-    .unsubscribed-state {
-      text-align: center;
-      padding: 1rem 0;
-    }
-
-    .unsubscribed-state p {
-      margin: 0 0 1rem 0;
-      color: var(--text-secondary);
-    }
-
     #content {
       display: none;
     }
@@ -285,10 +275,6 @@
           <button id="unsubscribe-btn" class="btn btn-danger">Unsubscribe</button>
         </div>
 
-        <div id="unsubscribed-state" class="unsubscribed-state" style="display: none;">
-          <p>You are currently unsubscribed from email updates.</p>
-          <a href="https://proofworks.cc" class="btn btn-primary" style="display: inline-block; text-decoration: none;">Resubscribe</a>
-        </div>
       </div>
     </div>
 
@@ -302,7 +288,6 @@
     const errorStateEl = document.getElementById('error-state');
     const contentEl = document.getElementById('content');
     const activeStateEl = document.getElementById('active-state');
-    const unsubscribedStateEl = document.getElementById('unsubscribed-state');
     const emailDisplayEl = document.getElementById('email-display');
     const messageEl = document.getElementById('message');
     const saveBtnEl = document.getElementById('save-btn');
@@ -339,8 +324,9 @@
         currentFrequency = data.frequency;
 
         if (!data.is_active) {
-          activeStateEl.style.display = 'none';
-          unsubscribedStateEl.style.display = 'block';
+          // Inactive users shouldn't have valid tokens (records are deleted on unsubscribe)
+          // but handle gracefully just in case
+          showError();
           return;
         }
 
@@ -426,10 +412,6 @@
 
     // Unsubscribe button handler
     unsubscribeBtnEl.addEventListener('click', async () => {
-      if (!confirm('Are you sure you want to unsubscribe from all email updates?')) {
-        return;
-      }
-
       unsubscribeBtnEl.disabled = true;
       unsubscribeBtnEl.textContent = 'Unsubscribing...';
       hideMessage();
@@ -444,9 +426,8 @@
         const data = await response.json();
 
         if (response.ok && data.success) {
-          activeStateEl.style.display = 'none';
-          unsubscribedStateEl.style.display = 'block';
-          showMessage('You have been unsubscribed.', 'success');
+          // Redirect to unsubscribed page (record is deleted, token no longer valid)
+          window.location.href = 'https://proofworks.cc/unsubscribed.html';
         } else {
           showMessage(data.error || 'Failed to unsubscribe.', 'error');
           unsubscribeBtnEl.disabled = false;
@@ -459,6 +440,7 @@
         unsubscribeBtnEl.textContent = 'Unsubscribe';
       }
     });
+
   </script>
 </body>
 </html>

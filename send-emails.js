@@ -153,9 +153,13 @@ function generateEmailHtml(documents) {
 
   <hr style="margin: 32px 0; border: none; border-top: 1px solid #eee;">
 
-  <p style="font-size: 12px; color: #999;">
+  <p style="font-size: 12px; color: #999; margin-bottom: 16px;">
     You're receiving this because you subscribed to AI Verification Document updates.
-    <br><a href="{{PREFERENCES_URL}}" style="color: #999;">Manage preferences</a> · <a href="{{UNSUBSCRIBE_URL}}" style="color: #999;">Unsubscribe</a>
+    <a href="{{PREFERENCES_URL}}" style="color: #999;">Manage preferences</a>
+  </p>
+
+  <p style="text-align: center;">
+    <a href="{{UNSUBSCRIBE_URL}}" style="display: inline-block; padding: 10px 20px; background-color: #666; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">Unsubscribe</a>
   </p>
 </body>
 </html>

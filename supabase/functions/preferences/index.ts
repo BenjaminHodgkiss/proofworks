@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/send-email.ts'
-import { frequencyChangeEmail, unsubscribeConfirmationEmail } from '../_shared/email-templates.ts'
+import { unsubscribeConfirmationEmail } from '../_shared/email-templates.ts'
 
 const SITE_URL = 'https://proofworks.cc'
 const VALID_FREQUENCIES = ['immediate', 'daily', 'weekly']
@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
   // Find subscriber by preferences token
   const { data: subscriber, error: fetchError } = await supabase
     .from('subscribers')
-    .select('id, email, email_frequency, is_active, preferences_token')
+    .select('id, email, email_frequency, is_active, preferences_token, unsubscribe_token')
     .eq('preferences_token', token)
     .single()
 
@@ -66,26 +66,31 @@ Deno.serve(async (req) => {
 
       // Handle unsubscribe action
       if (action === 'unsubscribe') {
-        const { error: updateError } = await supabase
+        // Send confirmation email before deleting (need the email address)
+        const unsubscribeHtml = unsubscribeConfirmationEmail()
+        const emailResult = await sendEmail({
+          to: subscriber.email,
+          subject: "You've been unsubscribed",
+          html: unsubscribeHtml
+        })
+
+        if (!emailResult.success) {
+          console.error('Failed to send unsubscribe confirmation email:', emailResult.error)
+        }
+
+        // Delete subscriber record
+        const { error: deleteError } = await supabase
           .from('subscribers')
-          .update({ is_active: false })
+          .delete()
           .eq('id', subscriber.id)
 
-        if (updateError) {
-          console.error('Database error:', updateError)
+        if (deleteError) {
+          console.error('Database error:', deleteError)
           return new Response(
             JSON.stringify({ error: 'Failed to unsubscribe' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
-
-        // Send confirmation email
-        const unsubscribeHtml = unsubscribeConfirmationEmail()
-        await sendEmail({
-          to: subscriber.email,
-          subject: "You've been unsubscribed",
-          html: unsubscribeHtml
-        })
 
         return new Response(
           JSON.stringify({ success: true, message: 'Successfully unsubscribed' }),
@@ -122,15 +127,6 @@ Deno.serve(async (req) => {
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
-
-        // Send confirmation email
-        const preferencesUrl = `${SITE_URL}/preferences.html?token=${subscriber.preferences_token}`
-        const confirmationHtml = frequencyChangeEmail(frequency, preferencesUrl)
-        await sendEmail({
-          to: subscriber.email,
-          subject: 'Your subscription preferences have been updated',
-          html: confirmationHtml
-        })
 
         return new Response(
           JSON.stringify({ success: true, message: 'Preferences updated' }),

@@ -2,14 +2,16 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/send-email.ts'
 import { unsubscribeConfirmationEmail } from '../_shared/email-templates.ts'
 
+const SITE_URL = 'https://proofworks.cc'
+
 Deno.serve(async (req) => {
   const url = new URL(req.url)
   const token = url.searchParams.get('token')
 
   if (!token) {
-    return new Response(renderHtml('Error', 'Invalid unsubscribe link.'), {
-      status: 400,
-      headers: { 'Content-Type': 'text/html' }
+    return new Response(null, {
+      status: 302,
+      headers: { 'Location': `${SITE_URL}/unsubscribe-error.html` }
     })
   }
 
@@ -26,98 +28,39 @@ Deno.serve(async (req) => {
     .single()
 
   if (fetchError || !subscriber) {
-    return new Response(renderHtml('Error', 'Invalid or expired unsubscribe link.'), {
-      status: 404,
-      headers: { 'Content-Type': 'text/html' }
+    return new Response(null, {
+      status: 302,
+      headers: { 'Location': `${SITE_URL}/unsubscribe-error.html` }
     })
   }
 
-  // Check if already unsubscribed
-  if (!subscriber.is_active) {
-    return new Response(renderHtml('Already Unsubscribed', 'You have already been unsubscribed from AI Verification Document updates.'), {
-      status: 200,
-      headers: { 'Content-Type': 'text/html' }
-    })
-  }
-
-  // Mark subscriber as inactive
-  const { error: updateError } = await supabase
-    .from('subscribers')
-    .update({ is_active: false })
-    .eq('id', subscriber.id)
-
-  if (updateError) {
-    console.error('Database error:', updateError)
-    return new Response(renderHtml('Error', 'Something went wrong. Please try again.'), {
-      status: 500,
-      headers: { 'Content-Type': 'text/html' }
-    })
-  }
-
-  // Send confirmation email
-  await sendEmail({
+  // Send confirmation email before deleting (need the email address)
+  const emailResult = await sendEmail({
     to: subscriber.email,
     subject: "You've been unsubscribed",
     html: unsubscribeConfirmationEmail()
   })
 
-  return new Response(
-    renderHtml('Unsubscribed', 'You have been successfully unsubscribed from AI Verification Document updates.'),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'text/html' }
-    }
-  )
-})
+  if (!emailResult.success) {
+    console.error('Failed to send unsubscribe confirmation email:', emailResult.error)
+  }
 
-function renderHtml(title: string, message: string): string {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} - AI Verification Documents</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #faf9f7;
-      color: #333;
-    }
-    .container {
-      text-align: center;
-      padding: 40px;
-      max-width: 400px;
-    }
-    h1 {
-      color: #5b8a8a;
-      margin-bottom: 16px;
-    }
-    p {
-      color: #666;
-      line-height: 1.6;
-    }
-    a {
-      color: #5b8a8a;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>${title}</h1>
-    <p>${message}</p>
-    <p><a href="https://proofworks.cc">Return to AI Verification Documents</a></p>
-  </div>
-</body>
-</html>
-  `
-}
+  // Delete subscriber record
+  const { error: deleteError } = await supabase
+    .from('subscribers')
+    .delete()
+    .eq('id', subscriber.id)
+
+  if (deleteError) {
+    console.error('Database error:', deleteError)
+    return new Response(null, {
+      status: 302,
+      headers: { 'Location': `${SITE_URL}/unsubscribe-error.html` }
+    })
+  }
+
+  return new Response(null, {
+    status: 302,
+    headers: { 'Location': `${SITE_URL}/unsubscribed.html` }
+  })
+})
