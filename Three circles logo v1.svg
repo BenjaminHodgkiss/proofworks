@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 
+    Therefore symbol (∴) matching Version 1
+    - Circle radius: 15
+    - Center-to-center distance: 42 (gap of 12 units between circles)
+    - Equilateral triangle arrangement
+  -->
+  
+  <!-- Top circle -->
+  <circle cx="50" cy="29" r="15" fill="black"/>
+  
+  <!-- Bottom left circle -->
+  <circle cx="28.8" cy="65.7" r="15" fill="black"/>
+  
+  <!-- Bottom right circle -->
+  <circle cx="71.2" cy="65.7" r="15" fill="black"/>
+</svg>
