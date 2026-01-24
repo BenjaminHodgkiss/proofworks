@@ -1,10 +1,9 @@
 const fs = require('fs');
-const path = require('path');
 
-const DOCUMENTS_PATH = path.join(__dirname, 'documents.json');
-const SITE_URL = 'https://proofworks.cc';
+const { DOCUMENTS_PATH, SITE_URL } = require('./lib/config');
+const { escapeHtml, formatAuthor, validateEnvVars } = require('./lib/utils');
+const { sendBulkEmails, fetchSubscribers } = require('./lib/email');
 
-// Parse command line arguments
 function parseArgs() {
   const args = process.argv.slice(2);
   let frequency = null;
@@ -25,31 +24,21 @@ function parseArgs() {
 
 async function main() {
   const { frequency } = parseArgs();
-
-  // Check for required environment variables
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !RESEND_API_KEY) {
-    console.error('Missing required environment variables');
-    process.exit(1);
-  }
+  const env = validateEnvVars(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'RESEND_API_KEY']);
 
   // Calculate the time window based on frequency
   const now = new Date();
   let sinceDate;
 
   if (frequency === 'daily') {
-    sinceDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
+    sinceDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   } else {
-    sinceDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+    sinceDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   }
 
   const sinceISO = sinceDate.toISOString();
   console.log(`Looking for documents added since ${sinceISO}`);
 
-  // Read documents.json and filter by date_added
   if (!fs.existsSync(DOCUMENTS_PATH)) {
     console.error('documents.json not found');
     process.exit(1);
@@ -57,7 +46,6 @@ async function main() {
 
   const allDocuments = JSON.parse(fs.readFileSync(DOCUMENTS_PATH, 'utf-8'));
 
-  // Filter documents added within the time window
   const newDocuments = allDocuments.filter(doc => {
     if (!doc.date_added) return false;
     const docDate = new Date(doc.date_added);
@@ -71,23 +59,12 @@ async function main() {
 
   console.log(`Found ${newDocuments.length} document(s) added in the ${frequency} window`);
 
-  // Fetch active and verified subscribers with matching frequency
-  const subscribersResponse = await fetch(
-    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_verified=eq.true&email_frequency=eq.${frequency}&select=email,unsubscribe_token,preferences_token`,
-    {
-      headers: {
-        'apikey': SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`
-      }
-    }
+  const subscribers = await fetchSubscribers(
+    env.SUPABASE_URL,
+    env.SUPABASE_SERVICE_ROLE_KEY,
+    frequency
   );
 
-  if (!subscribersResponse.ok) {
-    console.error('Failed to fetch subscribers:', await subscribersResponse.text());
-    process.exit(1);
-  }
-
-  const subscribers = await subscribersResponse.json();
   console.log(`Found ${subscribers.length} verified subscriber(s) with ${frequency} preference`);
 
   if (subscribers.length === 0) {
@@ -95,58 +72,27 @@ async function main() {
     return;
   }
 
-  // Generate email subject
   const periodLabel = frequency === 'daily' ? 'Daily' : 'Weekly';
   const subject = newDocuments.length === 1
     ? `${periodLabel} Digest: ${newDocuments[0].title}`
     : `${periodLabel} Digest: ${newDocuments.length} New AI Verification Documents`;
 
-  // Generate email HTML
-  const emailHtml = generateDigestEmailHtml(newDocuments, frequency);
+  const baseHtml = generateDigestEmailHtml(newDocuments, frequency);
 
-  // Send emails to each subscriber
-  let successCount = 0;
-  let errorCount = 0;
-
-  for (const subscriber of subscribers) {
-    const unsubscribeUrl = `${SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`;
+  const generatePersonalizedHtml = (subscriber) => {
+    const unsubscribeUrl = `${env.SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`;
     const preferencesUrl = `${SITE_URL}/preferences.html?token=${subscriber.preferences_token}`;
-
-    const personalizedHtml = emailHtml
+    return baseHtml
       .replace('{{UNSUBSCRIBE_URL}}', unsubscribeUrl)
       .replace('{{PREFERENCES_URL}}', preferencesUrl);
+  };
 
-    try {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: 'AI Verification Docs <updates@proofworks.cc>',
-          to: subscriber.email,
-          subject: subject,
-          html: personalizedHtml
-        })
-      });
-
-      if (response.ok) {
-        successCount++;
-        console.log(`Sent email to ${subscriber.email}`);
-      } else {
-        errorCount++;
-        const errorText = await response.text();
-        console.error(`Failed to send to ${subscriber.email}: ${errorText}`);
-      }
-
-      // Rate limiting: 100ms delay between sends
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch (error) {
-      errorCount++;
-      console.error(`Error sending to ${subscriber.email}:`, error.message);
-    }
-  }
+  const { successCount, errorCount } = await sendBulkEmails(
+    subscribers,
+    generatePersonalizedHtml,
+    subject,
+    env.RESEND_API_KEY
+  );
 
   console.log(`Email sending complete: ${successCount} sent, ${errorCount} failed`);
 }
@@ -156,7 +102,7 @@ function generateDigestEmailHtml(documents, frequency) {
   const periodDescription = frequency === 'daily' ? 'the past 24 hours' : 'the past week';
 
   const documentsList = documents.map(doc => {
-    const author = Array.isArray(doc.author) ? doc.author.join(', ') : (doc.author || 'Unknown');
+    const author = formatAuthor(doc.author);
     return `
       <div style="margin-bottom: 24px; padding: 16px; background-color: #f8f8f8; border-radius: 8px;">
         <h2 style="margin: 0 0 8px 0; font-size: 18px;">
@@ -200,16 +146,6 @@ function generateDigestEmailHtml(documents, frequency) {
 </body>
 </html>
   `;
-}
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 main().catch(error => {

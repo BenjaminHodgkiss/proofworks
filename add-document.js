@@ -4,6 +4,9 @@ const fs = require('fs');
 const readline = require('readline');
 const { execSync } = require('child_process');
 
+const { DOCUMENTS_PATH, ORDER_INCREMENT } = require('./lib/config');
+const { formatAuthor } = require('./lib/utils');
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -15,17 +18,60 @@ function question(prompt) {
   });
 }
 
+async function promptRequired(prompt, fieldName) {
+  const value = await question(prompt);
+  if (!value.trim()) {
+    console.log(`Error: ${fieldName} is required`);
+    rl.close();
+    process.exit(1);
+  }
+  return value.trim();
+}
+
 function loadDocuments() {
-  const documentsJson = fs.readFileSync('documents.json', 'utf-8');
-  return JSON.parse(documentsJson);
+  try {
+    const documentsJson = fs.readFileSync(DOCUMENTS_PATH, 'utf-8');
+    return JSON.parse(documentsJson);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error('Error: documents.json not found');
+    } else if (error instanceof SyntaxError) {
+      console.error('Error: documents.json contains invalid JSON');
+    } else {
+      console.error('Error reading documents.json:', error.message);
+    }
+    rl.close();
+    process.exit(1);
+  }
 }
 
 function saveDocuments(documents) {
-  fs.writeFileSync('documents.json', JSON.stringify(documents, null, 2) + '\n');
+  fs.writeFileSync(DOCUMENTS_PATH, JSON.stringify(documents, null, 2) + '\n');
+}
+
+function commitAndPush(title) {
+  console.log('\nCommitting and pushing to git...');
+  try {
+    execSync('git add documents.json feed.xml', { stdio: 'inherit' });
+    execSync(`git commit -m 'Add: ${title}'`, { stdio: 'inherit' });
+    execSync('git push', { stdio: 'inherit' });
+    console.log('\nChanges pushed to remote!\n');
+  } catch (err) {
+    console.log('\nGit operation failed. You may need to push manually.\n');
+  }
+}
+
+function regenerateFeed() {
+  console.log('\nRegenerating RSS feed...');
+  try {
+    execSync('node generate-feed.js', { stdio: 'inherit' });
+  } catch (err) {
+    console.log('\nFeed generation failed. Continuing with git commit...\n');
+  }
 }
 
 async function listDocuments() {
-  console.log('\n📚 Document List\n');
+  console.log('\nDocument List\n');
 
   const documents = loadDocuments();
 
@@ -36,11 +82,9 @@ async function listDocuments() {
   }
 
   documents.forEach((doc, index) => {
-    const authorDisplay = Array.isArray(doc.author) ? doc.author.join(', ') : doc.author;
-    const tagsDisplay = doc.tags.join(', ');
     console.log(`${index + 1}. [Order: ${doc.order}] ${doc.title}`);
-    console.log(`   Author: ${authorDisplay}`);
-    console.log(`   Tags: ${tagsDisplay}`);
+    console.log(`   Author: ${formatAuthor(doc.author)}`);
+    console.log(`   Tags: ${doc.tags.join(', ')}`);
     console.log('');
   });
 
@@ -48,99 +92,50 @@ async function listDocuments() {
 }
 
 async function addDocument() {
-  console.log('\n📄 Add New Document to Database\n');
+  console.log('\nAdd New Document to Database\n');
 
   const documents = loadDocuments();
 
-  // Get highest order number and increment
   const highestOrder = Math.max(...documents.map(d => d.order || 0));
-  const newOrder = highestOrder + 10;
+  const newOrder = highestOrder + ORDER_INCREMENT;
 
-  // Prompt for fields
-  const title = await question('Title: ');
-  if (!title.trim()) {
-    console.log('❌ Title is required');
-    rl.close();
-    return;
-  }
-
-  const url = await question('URL: ');
-  if (!url.trim()) {
-    console.log('❌ URL is required');
-    rl.close();
-    return;
-  }
+  const title = await promptRequired('Title: ', 'Title');
+  const url = await promptRequired('URL: ', 'URL');
 
   console.log('\nPlatform options: google-docs, google-slides, notion, airtable');
-  const platform = await question('Platform: ');
-  if (!platform.trim()) {
-    console.log('❌ Platform is required');
-    rl.close();
-    return;
-  }
-
-  const author = await question('Author: ');
-  if (!author.trim()) {
-    console.log('❌ Author is required');
-    rl.close();
-    return;
-  }
-
-  const description = await question('Description: ');
-  if (!description.trim()) {
-    console.log('❌ Description is required');
-    rl.close();
-    return;
-  }
+  const platform = await promptRequired('Platform: ', 'Platform');
+  const author = await promptRequired('Author: ', 'Author');
+  const description = await promptRequired('Description: ', 'Description');
 
   console.log('\nCommon tags: software, hardware, firmware, technical-paper, explainer, strategy, reading-list, research-agenda');
   const tagsInput = await question('Tags (comma-separated): ');
   const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
 
-  // Build new document object
   const newDoc = {
-    title: title.trim(),
-    url: url.trim(),
-    platform: platform.trim(),
-    author: author.trim(),
-    description: description.trim(),
-    tags: tags,
+    title,
+    url,
+    platform,
+    author,
+    description,
+    tags,
     order: newOrder,
     date_added: new Date().toISOString()
   };
 
-  // Add to beginning of array (highest order first)
   documents.unshift(newDoc);
-
   saveDocuments(documents);
 
-  console.log('\n✅ Document added successfully!');
+  console.log('\nDocument added successfully!');
   console.log(`   Order: ${newOrder}`);
 
-  // Regenerate feed.xml to include the new document
-  console.log('\n🔄 Regenerating RSS feed...');
-  try {
-    execSync('node generate-feed.js', { stdio: 'inherit' });
-  } catch (err) {
-    console.log('\n⚠️  Feed generation failed. Continuing with git commit...\n');
-  }
-
-  // Automatically commit and push
-  console.log('\n📤 Committing and pushing to git...');
-  try {
-    execSync('git add documents.json feed.xml', { stdio: 'inherit' });
-    execSync(`git commit -m 'Add: ${title.trim()}'`, { stdio: 'inherit' });
-    execSync('git push', { stdio: 'inherit' });
-    console.log('\n✅ Changes pushed to remote!\n');
-  } catch (err) {
-    console.log('\n⚠️  Git operation failed. You may need to push manually.\n');
-  }
+  regenerateFeed();
+  commitAndPush(title);
 
   rl.close();
 }
 
 async function editDocument() {
-  console.log('\n✏️  Edit Document\n');
+  console.log('\nEdit Document\n');
 
   const documents = loadDocuments();
 
@@ -150,25 +145,22 @@ async function editDocument() {
     return;
   }
 
-  // Display documents
   documents.forEach((doc, index) => {
-    const authorDisplay = Array.isArray(doc.author) ? doc.author.join(', ') : doc.author;
-    console.log(`${index + 1}. ${doc.title} (${authorDisplay})`);
+    console.log(`${index + 1}. ${doc.title} (${formatAuthor(doc.author)})`);
   });
 
   const selection = await question('\nSelect document number to edit: ');
   const docIndex = parseInt(selection) - 1;
 
   if (isNaN(docIndex) || docIndex < 0 || docIndex >= documents.length) {
-    console.log('❌ Invalid selection');
+    console.log('Error: Invalid selection');
     rl.close();
     return;
   }
 
   const doc = documents[docIndex];
-  console.log('\n📝 Current values (press Enter to keep current value):\n');
+  console.log('\nCurrent values (press Enter to keep current value):\n');
 
-  // Edit each field
   const title = await question(`Title [${doc.title}]: `);
   if (title.trim()) doc.title = title.trim();
 
@@ -178,7 +170,7 @@ async function editDocument() {
   const platform = await question(`Platform [${doc.platform}]: `);
   if (platform.trim()) doc.platform = platform.trim();
 
-  const currentAuthor = Array.isArray(doc.author) ? doc.author.join(', ') : doc.author;
+  const currentAuthor = formatAuthor(doc.author);
   const author = await question(`Author [${currentAuthor}]: `);
   if (author.trim()) doc.author = author.trim();
 
@@ -198,12 +190,12 @@ async function editDocument() {
 
   saveDocuments(documents);
 
-  console.log('\n✅ Document updated successfully!\n');
+  console.log('\nDocument updated successfully!\n');
   rl.close();
 }
 
 async function deleteDocument() {
-  console.log('\n🗑️  Delete Document\n');
+  console.log('\nDelete Document\n');
 
   const documents = loadDocuments();
 
@@ -213,42 +205,40 @@ async function deleteDocument() {
     return;
   }
 
-  // Display documents
   documents.forEach((doc, index) => {
-    const authorDisplay = Array.isArray(doc.author) ? doc.author.join(', ') : doc.author;
-    console.log(`${index + 1}. ${doc.title} (${authorDisplay})`);
+    console.log(`${index + 1}. ${doc.title} (${formatAuthor(doc.author)})`);
   });
 
   const selection = await question('\nSelect document number to delete: ');
   const docIndex = parseInt(selection) - 1;
 
   if (isNaN(docIndex) || docIndex < 0 || docIndex >= documents.length) {
-    console.log('❌ Invalid selection');
+    console.log('Error: Invalid selection');
     rl.close();
     return;
   }
 
   const doc = documents[docIndex];
-  console.log('\n📄 Document to delete:');
+  console.log('\nDocument to delete:');
   console.log(`   Title: ${doc.title}`);
-  console.log(`   Author: ${Array.isArray(doc.author) ? doc.author.join(', ') : doc.author}`);
+  console.log(`   Author: ${formatAuthor(doc.author)}`);
   console.log(`   URL: ${doc.url}`);
 
-  const confirm = await question('\n⚠️  Are you sure you want to delete this document? (yes/no): ');
+  const confirm = await question('\nAre you sure you want to delete this document? (yes/no): ');
 
   if (confirm.toLowerCase() === 'yes') {
     documents.splice(docIndex, 1);
     saveDocuments(documents);
-    console.log('\n✅ Document deleted successfully!\n');
+    console.log('\nDocument deleted successfully!\n');
   } else {
-    console.log('\n❌ Deletion cancelled.\n');
+    console.log('\nDeletion cancelled.\n');
   }
 
   rl.close();
 }
 
 function showUsage() {
-  console.log('\n📚 Document Manager\n');
+  console.log('\nDocument Manager\n');
   console.log('Usage: node add-document.js [command]\n');
   console.log('Commands:');
   console.log('  add     Add a new document');
@@ -258,7 +248,6 @@ function showUsage() {
   console.log('\nIf no command is provided, defaults to "add"\n');
 }
 
-// Main command router
 async function main() {
   const command = process.argv[2] || 'add';
 
@@ -283,13 +272,13 @@ async function main() {
         rl.close();
         break;
       default:
-        console.log(`❌ Unknown command: ${command}`);
+        console.log(`Error: Unknown command: ${command}`);
         showUsage();
         rl.close();
         process.exit(1);
     }
   } catch (err) {
-    console.error('❌ Error:', err.message);
+    console.error('Error:', err.message);
     rl.close();
     process.exit(1);
   }

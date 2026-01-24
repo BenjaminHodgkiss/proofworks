@@ -35,7 +35,9 @@
       "Bash(supabase db execute:*)",
       "Bash(supabase status:*)",
       "Bash(git push:*)",
-      "Bash(supabase link:*)"
+      "Bash(supabase link:*)",
+      "WebFetch(domain:nateross.dev)",
+      "Bash(node -c:*)"
     ]
   }
 }

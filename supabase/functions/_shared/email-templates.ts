@@ -1,7 +1,6 @@
 // Email templates for the subscription system
 
-const SITE_URL = 'https://proofworks.cc'
-const BRAND_COLOR = '#5b8a8a'
+import { SITE_URL, BRAND_COLOR } from './config.ts'
 
 function baseTemplate(title: string, content: string, footer: string): string {
   return `
@@ -99,4 +98,3 @@ export function unsubscribeConfirmationEmail(): string {
   const footer = ''
   return baseTemplate("You've Been Unsubscribed", content, footer)
 }
-

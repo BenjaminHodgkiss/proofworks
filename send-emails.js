@@ -1,24 +1,12 @@
 const fs = require('fs');
-const path = require('path');
 
-const DOCUMENTS_PATH = path.join(__dirname, 'documents.json');
-const SITE_URL = 'https://proofworks.cc';
-
-// Time window for considering documents as "new" for immediate emails (10 minutes)
-const NEW_DOCUMENT_WINDOW_MS = 10 * 60 * 1000;
+const { DOCUMENTS_PATH, SITE_URL, NEW_DOCUMENT_WINDOW_MS } = require('./lib/config');
+const { escapeHtml, formatAuthor, validateEnvVars } = require('./lib/utils');
+const { sendBulkEmails, fetchSubscribers } = require('./lib/email');
 
 async function main() {
-  // Check for required environment variables
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  const env = validateEnvVars(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'RESEND_API_KEY']);
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !RESEND_API_KEY) {
-    console.error('Missing required environment variables');
-    process.exit(1);
-  }
-
-  // Check if documents.json exists
   if (!fs.existsSync(DOCUMENTS_PATH)) {
     console.error('documents.json not found');
     process.exit(1);
@@ -42,23 +30,12 @@ async function main() {
 
   console.log(`Sending notifications for ${newDocuments.length} new document(s)`);
 
-  // Fetch active and verified subscribers who want immediate emails
-  const subscribersResponse = await fetch(
-    `${SUPABASE_URL}/rest/v1/subscribers?is_active=eq.true&email_verified=eq.true&email_frequency=eq.immediate&select=email,unsubscribe_token,preferences_token`,
-    {
-      headers: {
-        'apikey': SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`
-      }
-    }
+  const subscribers = await fetchSubscribers(
+    env.SUPABASE_URL,
+    env.SUPABASE_SERVICE_ROLE_KEY,
+    'immediate'
   );
 
-  if (!subscribersResponse.ok) {
-    console.error('Failed to fetch subscribers:', await subscribersResponse.text());
-    process.exit(1);
-  }
-
-  const subscribers = await subscribersResponse.json();
   console.log(`Found ${subscribers.length} active verified subscriber(s)`);
 
   if (subscribers.length === 0) {
@@ -66,64 +43,33 @@ async function main() {
     return;
   }
 
-  // Generate email subject
   const subject = newDocuments.length === 1
     ? `New Document: ${newDocuments[0].title}`
     : `${newDocuments.length} New AI Verification Documents`;
 
-  // Generate email HTML
-  const emailHtml = generateEmailHtml(newDocuments);
+  const baseHtml = generateEmailHtml(newDocuments);
 
-  // Send emails to each subscriber
-  let successCount = 0;
-  let errorCount = 0;
-
-  for (const subscriber of subscribers) {
-    const unsubscribeUrl = `${SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`;
+  const generatePersonalizedHtml = (subscriber) => {
+    const unsubscribeUrl = `${env.SUPABASE_URL}/functions/v1/unsubscribe?token=${subscriber.unsubscribe_token}`;
     const preferencesUrl = `${SITE_URL}/preferences.html?token=${subscriber.preferences_token}`;
-
-    const personalizedHtml = emailHtml
+    return baseHtml
       .replace('{{UNSUBSCRIBE_URL}}', unsubscribeUrl)
       .replace('{{PREFERENCES_URL}}', preferencesUrl);
+  };
 
-    try {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: 'AI Verification Docs <updates@proofworks.cc>',
-          to: subscriber.email,
-          subject: subject,
-          html: personalizedHtml
-        })
-      });
-
-      if (response.ok) {
-        successCount++;
-        console.log(`Sent email to ${subscriber.email}`);
-      } else {
-        errorCount++;
-        const errorText = await response.text();
-        console.error(`Failed to send to ${subscriber.email}: ${errorText}`);
-      }
-
-      // Rate limiting: 100ms delay between sends
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch (error) {
-      errorCount++;
-      console.error(`Error sending to ${subscriber.email}:`, error.message);
-    }
-  }
+  const { successCount, errorCount } = await sendBulkEmails(
+    subscribers,
+    generatePersonalizedHtml,
+    subject,
+    env.RESEND_API_KEY
+  );
 
   console.log(`Email sending complete: ${successCount} sent, ${errorCount} failed`);
 }
 
 function generateEmailHtml(documents) {
   const documentsList = documents.map(doc => {
-    const author = Array.isArray(doc.author) ? doc.author.join(', ') : (doc.author || 'Unknown');
+    const author = formatAuthor(doc.author);
     return `
       <div style="margin-bottom: 24px; padding: 16px; background-color: #f8f8f8; border-radius: 8px;">
         <h2 style="margin: 0 0 8px 0; font-size: 18px;">
@@ -164,16 +110,6 @@ function generateEmailHtml(documents) {
 </body>
 </html>
   `;
-}
-
-function escapeHtml(str) {
-  if (!str) return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 main().catch(error => {

@@ -1,56 +1,32 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/send-email.ts'
 import { verificationEmail } from '../_shared/email-templates.ts'
-
-const SITE_URL = 'https://proofworks.cc'
-const VERIFICATION_EXPIRY_HOURS = 24
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
-
-const VALID_FREQUENCIES = ['immediate', 'daily', 'weekly']
+import { VERIFICATION_EXPIRY_HOURS, VALID_FREQUENCIES } from '../_shared/config.ts'
+import { handleCors } from '../_shared/cors.ts'
+import { jsonResponse, errorResponse, successResponse } from '../_shared/responses.ts'
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
-  }
+  const corsResponse = handleCors(req)
+  if (corsResponse) return corsResponse
 
   if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    return errorResponse('Method not allowed', 405)
   }
 
   try {
     const { email, frequency = 'immediate' } = await req.json()
 
     if (!email || typeof email !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'Email is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return errorResponse('Email is required')
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid email format' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return errorResponse('Invalid email format')
     }
 
-    // Validate frequency
     if (!VALID_FREQUENCIES.includes(frequency)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid frequency. Must be: immediate, daily, or weekly' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return errorResponse('Invalid frequency. Must be: immediate, daily, or weekly')
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
@@ -60,7 +36,6 @@ Deno.serve(async (req) => {
 
     const normalizedEmail = email.toLowerCase()
 
-    // Check if subscriber already exists
     const { data: existing } = await supabase
       .from('subscribers')
       .select('id, unsubscribe_token, preferences_token, is_active, email_verified, email_frequency')
@@ -68,21 +43,11 @@ Deno.serve(async (req) => {
       .single()
 
     if (existing) {
-      // Case 1: Active and verified subscriber changing frequency
       if (existing.is_active && existing.email_verified) {
         if (existing.email_frequency === frequency) {
-          // No change needed
-          return new Response(
-            JSON.stringify({
-              success: true,
-              message: 'You are already subscribed with this frequency.',
-              requiresVerification: false
-            }),
-            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          )
+          return successResponse('You are already subscribed with this frequency.', { requiresVerification: false })
         }
 
-        // Update frequency
         const { error } = await supabase
           .from('subscribers')
           .update({ email_frequency: frequency })
@@ -90,23 +55,12 @@ Deno.serve(async (req) => {
 
         if (error) {
           console.error('Database error:', error)
-          return new Response(
-            JSON.stringify({ error: 'Failed to update subscription' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          )
+          return errorResponse('Failed to update subscription', 500)
         }
 
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: 'Preferences updated!',
-            requiresVerification: false
-          }),
-          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
+        return successResponse('Preferences updated!', { requiresVerification: false })
       }
 
-      // Case 2: Never verified - send new verification email
       const verificationToken = crypto.randomUUID()
       const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
       const preferencesToken = existing.preferences_token || crypto.randomUUID()
@@ -124,13 +78,9 @@ Deno.serve(async (req) => {
 
       if (error) {
         console.error('Database error:', error)
-        return new Response(
-          JSON.stringify({ error: 'Failed to subscribe' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
+        return errorResponse('Failed to subscribe', 500)
       }
 
-      // Send verification email
       const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
       const emailResult = await sendEmail({
         to: normalizedEmail,
@@ -140,23 +90,12 @@ Deno.serve(async (req) => {
 
       if (!emailResult.success) {
         console.error('Failed to send verification email:', emailResult.error)
-        return new Response(
-          JSON.stringify({ error: 'Failed to send verification email. Please try again.' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
+        return errorResponse('Failed to send verification email. Please try again.', 500)
       }
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: 'Check your email to verify your subscription.',
-          requiresVerification: true
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return successResponse('Check your email to verify your subscription.', { requiresVerification: true })
     }
 
-    // New subscriber - create with verification required
     const verificationToken = crypto.randomUUID()
     const expiresAt = new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000).toISOString()
     const preferencesToken = crypto.randomUUID()
@@ -166,7 +105,7 @@ Deno.serve(async (req) => {
       .from('subscribers')
       .insert({
         email: normalizedEmail,
-        is_active: false, // Will be set to true upon verification
+        is_active: false,
         email_frequency: frequency,
         email_verified: false,
         verification_token: verificationToken,
@@ -177,13 +116,9 @@ Deno.serve(async (req) => {
 
     if (error) {
       console.error('Database error:', error)
-      return new Response(
-        JSON.stringify({ error: 'Failed to subscribe' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return errorResponse('Failed to subscribe', 500)
     }
 
-    // Send verification email
     const verifyUrl = `${supabaseUrl}/functions/v1/verify-email?token=${verificationToken}`
     const emailResult = await sendEmail({
       to: normalizedEmail,
@@ -193,25 +128,12 @@ Deno.serve(async (req) => {
 
     if (!emailResult.success) {
       console.error('Failed to send verification email:', emailResult.error)
-      return new Response(
-        JSON.stringify({ error: 'Failed to send verification email. Please try again.' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return errorResponse('Failed to send verification email. Please try again.', 500)
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Check your email to verify your subscription.',
-        requiresVerification: true
-      }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    return successResponse('Check your email to verify your subscription.', { requiresVerification: true })
   } catch (error) {
     console.error('Error:', error)
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    return errorResponse('Internal server error', 500)
   }
 })
