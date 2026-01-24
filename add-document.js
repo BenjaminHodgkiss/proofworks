@@ -5,7 +5,7 @@ const readline = require('readline');
 const { execSync } = require('child_process');
 
 const { DOCUMENTS_PATH, ORDER_INCREMENT } = require('./lib/config');
-const { formatAuthor } = require('./lib/utils');
+const { formatAuthor, loadDocuments: loadDocumentsBase } = require('./lib/utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -30,16 +30,8 @@ async function promptRequired(prompt, fieldName) {
 
 function loadDocuments() {
   try {
-    const documentsJson = fs.readFileSync(DOCUMENTS_PATH, 'utf-8');
-    return JSON.parse(documentsJson);
+    return loadDocumentsBase(false);
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      console.error('Error: documents.json not found');
-    } else if (error instanceof SyntaxError) {
-      console.error('Error: documents.json contains invalid JSON');
-    } else {
-      console.error('Error reading documents.json:', error.message);
-    }
     rl.close();
     process.exit(1);
   }

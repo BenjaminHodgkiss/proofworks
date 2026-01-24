@@ -1,9 +1,9 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/send-email.ts'
 import { unsubscribeConfirmationEmail } from '../_shared/email-templates.ts'
 import { VALID_FREQUENCIES } from '../_shared/config.ts'
 import { handleCors } from '../_shared/cors.ts'
 import { jsonResponse, errorResponse, successResponse } from '../_shared/responses.ts'
+import { getSupabaseClient } from '../_shared/supabase.ts'
 
 Deno.serve(async (req) => {
   const corsResponse = handleCors(req)
@@ -16,10 +16,7 @@ Deno.serve(async (req) => {
     return errorResponse('Token is required')
   }
 
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  const supabase = getSupabaseClient()
 
   const { data: subscriber, error: fetchError } = await supabase
     .from('subscribers')

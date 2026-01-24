@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const { DOCUMENTS_PATH, SITE_URL, NEW_DOCUMENT_WINDOW_MS } = require('./lib/config');
-const { escapeHtml, formatAuthor, validateEnvVars } = require('./lib/utils');
+const { escapeHtml, formatAuthor, validateEnvVars, filterDocumentsByDate } = require('./lib/utils');
 const { sendBulkEmails, fetchSubscribers } = require('./lib/email');
 
 async function main() {
@@ -14,14 +14,9 @@ async function main() {
 
   // Read all documents and filter by date_added within the time window
   const allDocuments = JSON.parse(fs.readFileSync(DOCUMENTS_PATH, 'utf-8'));
-  const now = new Date();
-  const cutoffTime = new Date(now.getTime() - NEW_DOCUMENT_WINDOW_MS);
+  const cutoffTime = new Date(Date.now() - NEW_DOCUMENT_WINDOW_MS);
 
-  const newDocuments = allDocuments.filter(doc => {
-    if (!doc.date_added) return false;
-    const docDate = new Date(doc.date_added);
-    return docDate >= cutoffTime;
-  });
+  const newDocuments = filterDocumentsByDate(allDocuments, cutoffTime);
 
   if (newDocuments.length === 0) {
     console.log('No new documents to notify about');

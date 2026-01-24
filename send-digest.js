@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const { DOCUMENTS_PATH, SITE_URL, ONE_DAY_MS, ONE_WEEK_MS } = require('./lib/config');
-const { escapeHtml, formatAuthor, validateEnvVars } = require('./lib/utils');
+const { escapeHtml, formatAuthor, validateEnvVars, filterDocumentsByDate } = require('./lib/utils');
 const { sendBulkEmails, fetchSubscribers } = require('./lib/email');
 
 function parseArgs() {
@@ -46,11 +46,7 @@ async function main() {
 
   const allDocuments = JSON.parse(fs.readFileSync(DOCUMENTS_PATH, 'utf-8'));
 
-  const newDocuments = allDocuments.filter(doc => {
-    if (!doc.date_added) return false;
-    const docDate = new Date(doc.date_added);
-    return docDate >= sinceDate;
-  });
+  const newDocuments = filterDocumentsByDate(allDocuments, sinceDate);
 
   if (newDocuments.length === 0) {
     console.log(`No new documents in the ${frequency} window`);
