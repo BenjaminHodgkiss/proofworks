@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const { DOCUMENTS_PATH, SITE_URL } = require('./lib/config');
+const { DOCUMENTS_PATH, SITE_URL, ONE_DAY_MS, ONE_WEEK_MS } = require('./lib/config');
 const { escapeHtml, formatAuthor, validateEnvVars } = require('./lib/utils');
 const { sendBulkEmails, fetchSubscribers } = require('./lib/email');
 
@@ -31,9 +31,9 @@ async function main() {
   let sinceDate;
 
   if (frequency === 'daily') {
-    sinceDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    sinceDate = new Date(now.getTime() - ONE_DAY_MS);
   } else {
-    sinceDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    sinceDate = new Date(now.getTime() - ONE_WEEK_MS);
   }
 
   const sinceISO = sinceDate.toISOString();
