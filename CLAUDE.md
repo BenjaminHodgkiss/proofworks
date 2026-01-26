@@ -32,6 +32,7 @@ Simple tasks that don't require a reminder:
 ```bash
 npm run dev                   # Start local server at http://localhost:3000
 ```
+Note: The user keeps `npm run dev` running at all times. Do not start it.
 
 ### Document Management
 ```bash

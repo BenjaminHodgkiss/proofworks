@@ -56,10 +56,8 @@ header {
 }
 
 .title-container {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 3rem;
+  display: block;
+  text-align: center;
   margin-bottom: var(--space-sm);
 }
 
@@ -112,6 +110,35 @@ h1 {
 .subscribe-btn:hover {
   background: var(--accent);
   color: white;
+}
+
+/* Subscribe Row (mobile layout with images) */
+.subscribe-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.subscribe-row .subscribe-btn {
+  margin: 0;
+}
+
+.subscribe-row .header-image {
+  height: 50px;
+}
+
+.subscribe-row .header-image.left {
+  height: 35px;
+}
+
+/* Mobile/Desktop visibility */
+.desktop-only {
+  display: none;
+}
+
+.mobile-only {
+  display: block;
 }
 
 /* Modal */
@@ -595,6 +622,27 @@ footer p {
 
   .header-image.left {
     height: 84px;
+    justify-self: end;
+  }
+
+  .header-image.right {
+    justify-self: start;
+  }
+
+  /* Show images in title, hide around subscribe button */
+  .desktop-only {
+    display: block;
+  }
+
+  .mobile-only {
+    display: none;
+  }
+
+  .title-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 3rem;
   }
 
   .filters-section {
