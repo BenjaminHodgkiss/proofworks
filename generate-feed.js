@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const { DOCUMENTS_PATH, FEED_PATH, NEW_DOCS_PATH, FEED_TITLE, FEED_DESCRIPTION, SITE_URL } = require('./lib/config');
-const { escapeXml, unescapeXml } = require('./lib/utils');
+const { FEED_PATH, NEW_DOCS_PATH, FEED_TITLE, FEED_DESCRIPTION, SITE_URL } = require('./lib/config');
+const { escapeXml, unescapeXml, loadDocuments } = require('./lib/utils');
 
 function parseExistingFeed(feedXml) {
   const pubDates = new Map();
@@ -45,20 +45,7 @@ ${itemsXml}
 }
 
 function main() {
-  let documents;
-  try {
-    const documentsJson = fs.readFileSync(DOCUMENTS_PATH, 'utf-8');
-    documents = JSON.parse(documentsJson);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      console.error('Error: documents.json not found');
-    } else if (error instanceof SyntaxError) {
-      console.error('Error: documents.json contains invalid JSON');
-    } else {
-      console.error('Error reading documents.json:', error.message);
-    }
-    process.exit(1);
-  }
+  const documents = loadDocuments();
 
   let existingPubDates = new Map();
   let existingLastBuildDate = null;

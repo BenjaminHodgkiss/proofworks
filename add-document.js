@@ -5,7 +5,7 @@ const readline = require('readline');
 const { execSync } = require('child_process');
 
 const { DOCUMENTS_PATH, ORDER_INCREMENT } = require('./lib/config');
-const { formatAuthor } = require('./lib/utils');
+const { formatAuthor, loadDocuments: loadDocumentsBase } = require('./lib/utils');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -28,18 +28,18 @@ async function promptRequired(prompt, fieldName) {
   return value.trim();
 }
 
+async function editField(doc, fieldName, displayName, formatter = (v) => v) {
+  const currentValue = formatter(doc[fieldName]);
+  const newValue = await question(`${displayName} [${currentValue}]: `);
+  if (newValue.trim()) {
+    doc[fieldName] = newValue.trim();
+  }
+}
+
 function loadDocuments() {
   try {
-    const documentsJson = fs.readFileSync(DOCUMENTS_PATH, 'utf-8');
-    return JSON.parse(documentsJson);
+    return loadDocumentsBase(false);
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      console.error('Error: documents.json not found');
-    } else if (error instanceof SyntaxError) {
-      console.error('Error: documents.json contains invalid JSON');
-    } else {
-      console.error('Error reading documents.json:', error.message);
-    }
     rl.close();
     process.exit(1);
   }
@@ -161,21 +161,11 @@ async function editDocument() {
   const doc = documents[docIndex];
   console.log('\nCurrent values (press Enter to keep current value):\n');
 
-  const title = await question(`Title [${doc.title}]: `);
-  if (title.trim()) doc.title = title.trim();
-
-  const url = await question(`URL [${doc.url}]: `);
-  if (url.trim()) doc.url = url.trim();
-
-  const platform = await question(`Platform [${doc.platform}]: `);
-  if (platform.trim()) doc.platform = platform.trim();
-
-  const currentAuthor = formatAuthor(doc.author);
-  const author = await question(`Author [${currentAuthor}]: `);
-  if (author.trim()) doc.author = author.trim();
-
-  const description = await question(`Description [${doc.description}]: `);
-  if (description.trim()) doc.description = description.trim();
+  await editField(doc, 'title', 'Title');
+  await editField(doc, 'url', 'URL');
+  await editField(doc, 'platform', 'Platform');
+  await editField(doc, 'author', 'Author', formatAuthor);
+  await editField(doc, 'description', 'Description');
 
   const currentTags = doc.tags.join(', ');
   const tagsInput = await question(`Tags [${currentTags}]: `);

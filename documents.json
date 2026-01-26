@@ -62,22 +62,6 @@
     "order": 240
   },
   {
-    "title": "Breaking Location Verification through IR-LVP",
-    "url": "https://docs.google.com/document/d/1eBS5f0XiR3LwPljJ5Ivsq9MHUrjlJLqQ0ykGF5P9Ea4/edit?tab=t.0#heading=h.cka6r683sp3r",
-    "platform": "google-docs",
-    "author": [
-      "Jonathan Happel",
-      "Shahin Tajik",
-      "Jackson Dean"
-    ],
-    "description": "Methods to circumvent location verification systems, focusing on IR-LVP.",
-    "tags": [
-      "technical-paper",
-      "hardware"
-    ],
-    "order": 70
-  },
-  {
     "title": "Concrete Verification Projects",
     "url": "https://docs.google.com/document/d/10DsSGnaJwgvQVb42uHzIuOYTIn28wTnlWro7v9jdwyA/edit?tab=t.a1wh4rg8z65d",
     "platform": "google-docs",

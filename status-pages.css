@@ -1,0 +1,74 @@
+/* Shared styles for status pages (verified, error, unsubscribed, etc.) */
+:root {
+  --bg-primary: #faf9f7;
+  --text-primary: #2d3748;
+  --text-secondary: #64748b;
+  --accent: #5b8a8a;
+  --accent-hover: #4a7373;
+  --radius: 8px;
+
+  /* Spacing scale */
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.container {
+  text-align: center;
+  padding: var(--space-xl);
+  max-width: 400px;
+}
+
+h1 {
+  color: var(--accent);
+  margin-bottom: var(--space-md);
+}
+
+h1.error {
+  color: #c44;
+}
+
+h1.warning {
+  color: #c97a5d;
+}
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem var(--space-lg);
+  background-color: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius);
+  margin-top: var(--space-md);
+}
+
+.btn:hover {
+  background-color: var(--accent-hover);
+  text-decoration: none;
+}
