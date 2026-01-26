@@ -12,18 +12,49 @@
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      gap: 1.5rem;
-      margin-top: 3rem;
-      margin-bottom: 3rem;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
     }
     .logo-title-container img {
-      height: 104px;
+      height: 40px;
       width: auto;
-      transform: translateY(-39px);
+      transform: translateY(-10px);
+      flex-shrink: 0;
     }
     .logo-title-container h1 {
-      font-size: 675%;
+      font-size: 2.5rem;
       margin: 0;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 480px) {
+      .logo-title-container {
+        gap: 1rem;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+      }
+      .logo-title-container img {
+        height: 70px;
+        transform: translateY(-26px);
+      }
+      .logo-title-container h1 {
+        font-size: 4.5rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .logo-title-container {
+        gap: 1.5rem;
+      }
+      .logo-title-container img {
+        height: 104px;
+        transform: translateY(-39px);
+      }
+      .logo-title-container h1 {
+        font-size: 675%;
+      }
     }
   </style>
 </head>

@@ -117,7 +117,9 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 2.1rem;
+  margin-top: 1.6875rem;
+  margin-bottom: -1.3125rem;
 }
 
 .subscribe-row .subscribe-btn {
@@ -125,11 +127,11 @@ h1 {
 }
 
 .subscribe-row .header-image {
-  height: 50px;
+  height: 90px;
 }
 
 .subscribe-row .header-image.left {
-  height: 35px;
+  height: 63px;
 }
 
 /* Mobile/Desktop visibility */
@@ -138,7 +140,16 @@ h1 {
 }
 
 .mobile-only {
-  display: block;
+  display: inline-block;
+}
+
+/* Button text visibility */
+.btn-text-desktop {
+  display: none;
+}
+
+.btn-text-mobile {
+  display: inline;
 }
 
 /* Modal */
@@ -635,6 +646,15 @@ footer p {
   }
 
   .mobile-only {
+    display: none;
+  }
+
+  /* Button text for desktop */
+  .btn-text-desktop {
+    display: inline;
+  }
+
+  .btn-text-mobile {
     display: none;
   }
 
