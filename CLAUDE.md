@@ -108,6 +108,7 @@ RESEND_API_KEY
 - Email sending uses Resend API; sender is `updates@proofworks.cc`
 - Verification tokens expire in 24 hours
 - Site URL is `https://proofworks.cc`
+- When user refers to "LD page" they mean `https://proofworks.cc/living-docs` which has the folder "living-docs" in the codebase
 - Frontend is vanilla HTML/CSS/JS with no build step
 - Edge functions use Deno runtime with esm.sh imports
 
