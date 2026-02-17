@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proofworks</title>
+  <link rel="icon" type="image/svg+xml" href="favicon-light.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="favicon-dark.svg" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .logo-title-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+    }
+    .logo-title-container img {
+      height: 40px;
+      width: auto;
+      transform: translateY(-14px);
+      flex-shrink: 0;
+    }
+    .logo-title-container h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 480px) {
+      .logo-title-container {
+        gap: 1rem;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+      }
+      .logo-title-container img {
+        height: 70px;
+        transform: translateY(-26px);
+      }
+      .logo-title-container h1 {
+        font-size: 4.5rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .logo-title-container {
+        gap: 1.5rem;
+      }
+      .logo-title-container img {
+        height: 104px;
+        transform: translateY(-39px);
+      }
+      .logo-title-container h1 {
+        font-size: 675%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-title-container">
+        <img src="Three circles logo v1.svg" alt="Proofworks logo">
+        <h1>Proofworks</h1>
+      </div>
+    </header>
+
+    <footer>
+      <p>&nbsp;</p>
+    </footer>
+  </div>
+</body>
+</html>
