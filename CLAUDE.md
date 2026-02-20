@@ -112,6 +112,10 @@ RESEND_API_KEY
 - Frontend is vanilla HTML/CSS/JS with no build step
 - Edge functions use Deno runtime with esm.sh imports
 
+## README Maintenance
+
+When creating, moving, renaming, or deleting markdown files or folders, update the README.md in the affected folder(s) to keep directory structure sections accurate. If a folder doesn't have a README.md yet, create one with a brief description and directory structure listing.
+
 ## Code Changes
 
 Keep changes minimal and focused. Only modify what's directly requested—don't add unrequested features, refactor surrounding code, or add "just in case" error handling. Trust internal code; only validate at system boundaries. Prefer three similar lines over a premature abstraction.
